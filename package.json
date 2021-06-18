@@ -1,0 +1,23 @@
+{
+  "name": "ss-script",
+  "version": "1.0.0",
+  "description": "<div style=\"text-align:center;\">\r     <img align=\"center\" src=\"https://getsharex.com/img/ShareX_Icon_Full.ico\"> x <img align=\"center\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/1280px-Node.js_logo.svg.png\">\r     </div>\r # How does this work?\r This is a simple Express app built in Node.js that accepts ShareX's **Custom Uploader** files and saves them in ./uploads/. Using this, you can make screenshots upload to a custom domain immediately. *Note: You need your own domain and web hosting for this to work. I am only providing the script.*\r # How do I set this up?\r It's, actually, easier than you'd expect!",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "chalk": "^4.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Awex",
+  "license": "MIT"
+}
