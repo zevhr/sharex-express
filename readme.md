@@ -12,7 +12,8 @@ This is a simple Express app built in Node.js that accepts ShareX's **Custom Upl
 It's, actually, easier than you'd expect!
 First, <a href="https://getsharex.com">download ShareX from their website</a> and set it up to how you like it.<br>
 Then, clone this repo and create a file called **.env** inside of the directory (with index.js, package.json etc).<br>
-Inside of this .env file, type **secret=** and then make your own master password directly after that = sign (no space). This will make sure no one else can POST to your domain without your token.<br> 
+Inside of this .env file, type **secret=** and then make your own master password directly after that = sign (no space). This will make sure no one else can POST to your domain without your token.<br>
+Also add **domain=** and add the domain you want to post **with** http or https and **without** the trailing /. The domain should look something like `https://ss.awexxx.xyz`. 
 After you've done that, click on **Destinations** then **Custom uploader settings...**
 
 <hr>
@@ -24,7 +25,7 @@ After you've done that, click on **Destinations** then **Custom uploader setting
 
 When you're in there, name the source and put your URL with /ss as the path. Leave the method as POST.<br>
 
-Also make sure to, under **URL Parameters**, add your secret so ShareX can actually upload (this is why you had to add **secret=yourmasterpass** in .env!).<br>
+Make sure to, under **URL Parameters**, add your secret so ShareX can actually upload (this is why you had to add **secret=yourmasterpass** in .env!).<br>
 <div style="text-align:center;">
 <img src="https://ss.awexxx.xyz/uploads/hbf3DUnJLd.png">
 </div>

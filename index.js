@@ -11,6 +11,9 @@ const chalk = require('chalk');
 const path = require('path');
 require('dotenv').config()
 
+// Grabs the domain from .env
+const domain = process.env.domain
+
 // Spinning up an express app
 const app = express();
 
@@ -40,7 +43,7 @@ app.post('/ss', (req, res) => {
                 
                 screenshot.mv('./uploads/' + screenshot.name);
     
-                res.send(`https://ss.awexxx.xyz/uploads/${screenshot.name}`);
+                res.send(`${domain}/uploads/${screenshot.name}`);
             }
         } catch (err) {
             res.status(500).send(err);
