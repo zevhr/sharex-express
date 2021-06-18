@@ -11,9 +11,11 @@ This is a simple Express app built in Node.js that accepts ShareX's **Custom Upl
 # How do I set this up?
 It's, actually, easier than you'd expect!
 First, <a href="https://getsharex.com">download ShareX from their website</a> and set it up to how you like it.<br>
-Then, clone this repo and create a file called **.env** inside of the directory (with index.js, package.json etc).<br>
-Inside of this .env file, type **secret=** and then make your own master password directly after that = sign (no space). This will make sure no one else can POST to your domain without your token.<br>
-Also add **domain=** and add the domain you want to post **with** http or https and **without** the trailing /. The domain should look something like `https://ss.awexxx.xyz`. 
+When you have ShareX, clone this repository to your PC and open the directory.<br>
+Inside, you'll find **.env.sample**. We'll take a look at this first.<br>
+Edit that file and change these settings to your liking. Make your own password, set the protocol to HTTPS or HTTP (http if you do NOT have a ssl cert, https if you do), and input your own domain (ss.yourdomain.com). All of these steps are required.<br>
+If your host has its own set port already, remove the PORT directive from that file.<br>
+When you're done, rename the **.env.sample** to **.env** and then run `node .` in the same directory via a terminal.<br>
 After you've done that, click on **Destinations** then **Custom uploader settings...**
 
 <hr>
@@ -25,7 +27,7 @@ After you've done that, click on **Destinations** then **Custom uploader setting
 
 When you're in there, name the source and put your URL with /ss as the path. Leave the method as POST.<br>
 
-Make sure to, under **URL Parameters**, add your secret so ShareX can actually upload (this is why you had to add **secret=yourmasterpass** in .env!).<br>
+Make sure to, under **URL Parameters**, add your secret so ShareX can actually upload (this is why you had to add your own pass in .env!).<br>
 <div style="text-align:center;">
 <img src="https://ss.awexxx.xyz/uploads/hbf3DUnJLd.png">
 </div>
