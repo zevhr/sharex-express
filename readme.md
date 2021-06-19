@@ -22,7 +22,8 @@ You'll also want to change the domain and protocol to what you require. If you h
 <p align="center">
 <img src="https://ss.awexxx.xyz/uploads/RbVvw0Ig4q.png">
 </p></p>
-<p align="center">That's all we needed to do for this file! Rename it and remove the .sample so it's just called <strong>.env</strong> and we can move on!</p>
+<p align="center">That's all we needed to do for this file! Rename it and remove the .sample so it's just called <strong>.env</strong> and we can move on!<br>
+<i>Note: Make sure all little messages I added are gone. It may take them as part of the values if you don't.</i></p>
 
 <hr>
 
@@ -83,6 +84,12 @@ Make sure while you're here to add under <strong>URL Parameters</strong> your se
 # <p align="center">Guess what? You did it!</p>
 <p align="center">Use the tests in the bottom left of that window to verify it's working!<br>
 If you run into any errors or issues, please let me know via the <a href="https://github.com/awexxx/sharex-express/issues">Issues page</a>! I'll be happy to help :)</p>
+
+# <p align="center">Customization</p>
+<p align="center"> I've included some tools to help you customize this script to its fullest potential!<br>
+In .env, you can add the <b>embedcolor</b> property and then add a HEX element (ex. #ffffff is white, google hex color picker lol)<br>
+Adding this will change the sidebar color of the embed.<br>
+You can also head to <a href="https://awexxx.xyz/oembed.json">this link</a> and get the oEmbed JSON file and self host it to change the provider title that appears on the embed. You can set the url to the oembed.json file with the <b>oembed</b> property in .env.</p>
 
 # To Do List
 [x] - Make all images embed in actual embeds with date, time etc<br>

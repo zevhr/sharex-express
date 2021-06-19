@@ -27,9 +27,6 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'))
 // app.use(express.static(__dirname + '/uploads'));
-app.use(express.static(__dirname + '/public', {
-    extensions: ['html', 'htm']
-}));
 app.use(fileUpload({
     createParentPath: true
 }));
@@ -65,7 +62,7 @@ app.post('/post', (req, res) => {
                     res.send(url);
 
                     var date = new Date();
-                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> <link rel="stylesheet" href="/css/bootstrap.css"> <link rel="stylesheet" href="/css/style.css"> <meta content="Awex" property="og:title"> <meta content="Awex's Screenshot from ${date}" property="og:description"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="#9c2d1c" data-react-helmet="true" name="theme-color"> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> <br><h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </div> </body> </html>`;
+                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
                     fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (error) => { console.log(chalk.redBright('Error writing file! (If there is nothing after this, it is a bug!)', error)) });
                 }
             }
@@ -90,7 +87,7 @@ app.post('/post', (req, res) => {
                     res.send(url);
 
                     var date = new Date();
-                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> <link rel="stylesheet" href="/css/bootstrap.css"> <link rel="stylesheet" href="/css/style.css"> <meta content="Awex" property="og:title"> <meta content="Awex's Screenshot from ${date}" property="og:description"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="#9c2d1c" data-react-helmet="true" name="theme-color"> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> <br><h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </div> </body> </html>`;
+                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
                     fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (error) => { console.log(chalk.redBright('Error writing file! (If there is nothing after this, it is a bug!)', error)) });
                 }
             }
@@ -106,6 +103,19 @@ app.post('/post', (req, res) => {
         res.sendFile(__dirname + `/uploads/${req.params.id}`);
     })
 
+    if (process.env.domain === undefined) {
+        console.log(chalk.redBright.bold`The domain property in .env wasn't found! ` +  chalk.redBright`Either it wasn't provided or .env doesn't exist!`)
+        process.exit(1);
+    } else if (process.env.protocol === undefined) {
+        console.log(chalk.redBright.bold`The protocol property in .env wasn't found! `, chalk.redBright`Either it wasn't provided or .env doesn't exist!`)
+        process.exit(1);
+    } else if (process.env.secret === `yoursupersecretmasterpasswordhere`) {
+        console.log(chalk.redBright`Please change your secret from the default 'yoursupersecretmasterpasswordhere' to prevent possible comprimisations.`)
+        process.exit(1);
+    } else if (process.env.secret === undefined) {
+        console.log(chalk.redBright.bold`The secret property in .env wasn't found! ` + chalk.redBright`Either it wasn't provided or .env doesn't exist!`)
+        process.exit(1);
+    }
 
 const httpServer = http.createServer(app);
 const PORT = 5000;
@@ -113,8 +123,6 @@ httpServer.listen(PORT, () => {
 console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
 \nNeed help? Let me know on the issues page or via my dev Discord (https://awexxx.xyz/discord)!
 \nTo get started, read the readme and POST an image via ShareX!
-\n Your Settings:
-\n Protocol: ${protocol}
-\n Domain: ${domain}
+\nYour Settings: Protocol: ${protocol}, Domain: ${domain}, Embed Color ${process.env.embedcolor}
 \nScript now running on`, chalk.red(`http://localhost:${PORT}/`, '\n--------------------------\n')));
 }); 
