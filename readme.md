@@ -20,7 +20,7 @@ First, let's take a look at the .env.sample file. This is where all the goodies 
 You'll need to make a few changes to this file. First, you'll need to make your own password.<br> This will ensure you are the only person uploading to your domain. We'll need to add this later.<br>
 You'll also want to change the domain and protocol to what you require. If you have an SSL cert, set it as <strong>https</strong>. If you don't, set it as http.<br>
 <p align="center">
-<img src="https://ss.awexxx.xyz/uploads/TylQ5fw35T.png">
+<img src="https://ss.awexxx.xyz/uploads/pNz5hjw3Tu.png">
 </p></p>
 <p align="center">That's all we needed to do for this file! Rename it and remove the .sample so it's just called <strong>.env</strong> and we can move on!<br>
 <i>Note: Make sure all little messages I added are gone. It may take them as part of the values if you don't.</i></p>
