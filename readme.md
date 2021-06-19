@@ -3,7 +3,8 @@
     <a href="https://getsharex.com"><img align="center" src="https://getsharex.com/img/ShareX_Icon_Full.ico"></a> <a href="https://nodejs.org"><img align="center" width="300" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/1280px-Node.js_logo.svg.png"></a></p>
     <hr>
     <p align="center"><b>This script is meant for use with the screenshotting application ShareX.<br>
-    It is built on Node.js using a package called Express.</b></p>
+    It is built on Node.js using a package called Express.</b><br>
+    <i>I got this idea from pays.host, their service is a lot better, but sadly you need an invite code.</i></p>
     <hr>
     
 # <p align="center">Before we get started..</p>
