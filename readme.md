@@ -1,9 +1,10 @@
 # <p align="center">Awex's ShareX Express.js Uploader</p>
-<div style="text-align:center;">
-    <a href="https://getsharex.com"><img align="center" src="https://getsharex.com/img/ShareX_Icon_Full.ico"></a> <a href="https://nodejs.org"><img align="center" width="300" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/1280px-Node.js_logo.svg.png"></a></div>
+<p align="center">
+    <a href="https://getsharex.com"><img align="center" src="https://getsharex.com/img/ShareX_Icon_Full.ico"></a> <a href="https://nodejs.org"><img align="center" width="300" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/1280px-Node.js_logo.svg.png"></a></p>
     <hr>
     <p align="center"><b>This script is meant for use with the screenshotting application ShareX.<br>
-    It is built on Node.js using a package called Express.</b></p>
+    It is built on Node.js using a package called Express.</b><br>
+    <i>I got this idea from pays.host, their service is a lot better, but sadly you need an invite code.</i></p>
     <hr>
     
 # <p align="center">Before we get started..</p>
@@ -18,9 +19,9 @@ First, let's take a look at the .env.sample file. This is where all the goodies 
 <strong>.env.sample</strong><br>
 You'll need to make a few changes to this file. First, you'll need to make your own password.<br> This will ensure you are the only person uploading to your domain. We'll need to add this later.<br>
 You'll also want to change the domain and protocol to what you require. If you have an SSL cert, set it as <strong>https</strong>. If you don't, set it as http.<br>
-<div style="text-align:center;">
+<p align="center">
 <img src="https://ss.awexxx.xyz/uploads/RbVvw0Ig4q.png">
-</div></p>
+</p></p>
 <p align="center">That's all we needed to do for this file! Rename it and remove the .sample so it's just called <strong>.env</strong> and we can move on!</p>
 
 <hr>
@@ -69,15 +70,15 @@ CertBot will automatically make all HTTP traffic redirect to HTTPS if you do imp
 # <p align="center"> Setting this script up in ShareX</p>
 <p align="center">To set this script up in ShareX, take a look at the sidebar and hit <strong>Destinations</strong> and then <strong>Custom uploader settings..</strong></p>
 
-<div style="text-align:center;">
+<p align="center">
 <img src="https://ss.awexxx.xyz/uploads/w8FxzP66VD.gif"
-</div>
+</p>
 
 <p align="center">In this window, name it whatever you want and add the domain you chose to host it on along with <strong>/post</strong> on the end. Leave method as POST.<br>
 Make sure while you're here to add under <strong>URL Parameters</strong> your secret pass from earlier in .env.</p>
-<div style="text-align:center;">
+<p align="center">
 <img src="https://ss.awexxx.xyz/uploads/TylQ5fw35T.png">
-</div>
+</p>
 
 # <p align="center">Guess what? You did it!</p>
 <p align="center">Use the tests in the bottom left of that window to verify it's working!<br>
