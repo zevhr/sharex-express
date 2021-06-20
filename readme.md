@@ -76,9 +76,9 @@ CertBot will automatically make all HTTP traffic redirect to HTTPS if you do imp
 </p>
 
 <p align="center">In this window, name it whatever you want and add the domain you chose to host it on along with <strong>/post</strong> on the end. Leave method as POST.<br>
-Make sure while you're here to add under <strong>URL Parameters</strong> your secret pass from earlier in .env.</p>
+Make sure while you're here to add under <strong>Headers</strong> your secret pass from earlier in .env.</p>
 <p align="center">
-<img src="https://ss.awexxx.xyz/uploads/TylQ5fw35T.png">
+<img src="https://ss.awexxx.xyz/uploads/ANXYFxmnQV.png">
 </p>
 
 # <p align="center">Guess what? You did it!</p>
@@ -97,3 +97,4 @@ You can also head to <a href="https://awexxx.xyz/oembed.json">this link</a> and 
 [ ] - Possible custom titles to images?<br>
 [x] - Fix issue where <strong>Error writing file!</strong> shows even when there isn't an issue writing html files<br>
 [ ] - Possible profile page with all screenshots, with the ability to make them private
+[ ] - A possible route to delete screenshots if authed with token

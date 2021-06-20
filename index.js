@@ -1,7 +1,11 @@
-////////////////////////////////////////////
-//            An Awex Project             //
-//         ShareX Custom Uploader         //
-////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+//   __  .__    .__         .__                               //
+// _/  |_|  |__ |__| ______ |__| ______ ______   ____   ____  //
+// \   __\  |  \|  |/  ___/ |  |/  ___/ \____ \ /  _ \ / ___\ //
+//  |  | |   Y  \  |\___ \  |  |\___ \  |  |_> >  <_> ) /_/  >//
+//  |__| |___|  /__/____  > |__/____  > |   __/ \____/\___  / //
+//            \/        \/          \/  |__|         /_____/  //
+////////////////////////////////////////////////////////////////
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -35,15 +39,43 @@ app.get('/', (req, res) => {
     return res.status(200).send(JSON.stringify({ "status": 200, "app-name": "your-name-here", "authentication": true }))
 });
 
-app.get('/:id', (req, res) => {
-    return res.sendFile(__dirname + `/ss/${req.params.id}.html`);
-})
+        app.get('/:id', (req, res) => {
+            return res.sendFile(__dirname + `/ss/${req.params.id}.html`);
+        })
+
+        // Now slightly less cool :(
+        app.get('/uploads/:id', (req, res) => {
+            res.sendFile(__dirname + `/uploads/${req.params.id}`);
+        })
+
+        app.delete('/delete/:id', (req, res) => {
+            const header = req.get('secret');
+            if(header === `${process.env.secret}`) {
+                if(fs.existsSync(__dirname + `/ss/${req.params.id}.html`) && fs.existsSync(__dirname + `/uploads/${req.params.id}`)) {
+                    fs.unlink(__dirname + `/ss/${req.params.id}.html/`, (err) => {
+                        if(err) throw(err);
+                        console.log(chalk.green(`${req.params.id}'s HTML was deleted.`))
+                    })   
+                    fs.unlink(__dirname + `/uploads/${req.params.id}`, (err) => {
+                        if(err) throw(err);
+                        console.log(chalk.green(`${req.params.id}'s photo was deleted.`))
+                    })
+                    res.status(200).send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
+                } else if (!fs.existsSync(__dirname + `/ss/${req.params.id}.html`) && !fs.existsSync(__dirname + `/uploads/${req.params.id}`)) {
+                    res.status(500).send({ "status": 500, "message": `${req.params.id} wasn't found on this server.`})
+                }
+            } else if (!header) {
+                return res.status(403).send({ "status": 403, "message": "No secret header was supplied."})
+            } else if (!header === `${process.env.secret}`) {
+                return res.status(403).send({ "status": 403, "message": "The secret header was supplied, however it is not correct."})
+            }
+        })
 
 // Now, to the fun stuff..
-
 app.post('/post', (req, res) => {
     console.log(`URL will be served as`, process.env.protocol)
-    if(req.query.secret === `${process.env.secret}`) {
+    const header = req.get('secret');
+    if(header === `${process.env.secret}`) {
         if (protocol === `https`) {
             try {
                 if(!req.files) {
@@ -105,13 +137,12 @@ app.post('/post', (req, res) => {
                 res.status(500).send(err)
             }
         }
+    } else if (!header) {
+        return res.status(403).send(JSON.stringify({ "status": 403, "message": "No secret header was supplied. Make sure ShareX is configured correctly."}))
+    } else if (!header === `${process.env.secret}`) {
+        return res.status(403).send(JSON.stringify({ "status": 403, "message": "Secret was incorrect."}))
     }
 })
-
-    // Now slightly less cool :(
-    app.get('/uploads/:id', (req, res) => {
-        res.sendFile(__dirname + `/uploads/${req.params.id}`);
-    })
 
     if (process.env.domain === undefined) {
         console.log(chalk.redBright.bold`The domain property in .env wasn't found! ` +  chalk.redBright`Either it wasn't provided or .env doesn't exist!`)
