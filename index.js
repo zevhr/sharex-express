@@ -63,7 +63,12 @@ app.post('/post', (req, res) => {
 
                     var date = new Date();
                     let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
-                    fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (error) => { console.log(chalk.redBright('Error writing file! (If there is nothing after this, it is a bug!)', error)) });
+                    try {
+                    fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (success) => {console.log(chalk.green`Successfully recieved ${screenshot.name}!`)});
+                    }
+                    catch(error) {
+                        console.log(chalk.redBright('Error writing file:', error))
+                    }
                 }
             }
             catch(err) {
@@ -88,7 +93,12 @@ app.post('/post', (req, res) => {
 
                     var date = new Date();
                     let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
-                    fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (error) => { console.log(chalk.redBright('Error writing file! (If there is nothing after this, it is a bug!)', error)) });
+                    try {
+                    fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (success) => {console.log(chalk.green`Successfully recieved ${screenshot.name}!`)});
+                    }
+                    catch(error) {
+                     console.log(chalk.redBright('Error writing file:', error))
+                    }
                 }
             }
             catch(err) {
