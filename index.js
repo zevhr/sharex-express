@@ -65,9 +65,9 @@ app.get('/', (req, res) => {
                     res.status(500).send({ "status": 500, "message": `${req.params.id} wasn't found on this server.`})
                 }
             } else if (!header) {
-                return res.status(403).send({ "status": 403, "message": "No secret header was supplied."})
-            } else if (!header === `${process.env.secret}`) {
-                return res.status(403).send({ "status": 403, "message": "The secret header was supplied, however it is not correct."})
+                res.status(403).send({ "status": 403, "message": "No secret header was supplied."})
+            } else if (header != process.env.secret) {
+                res.status(403).send({ "status": 403, "message": "The secret header was supplied, however it is not correct."})
             }
         })
 
@@ -94,7 +94,7 @@ app.post('/post', (req, res) => {
                     res.send(url);
 
                     var date = new Date();
-                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
+                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <link rel="stylesheet" href="https://plaguecraft.xyz/storage/assets/css/form.css"> <script src="https://awexxx.xyz/assets/js/screenshot.js"></script> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> <script> var url="${protocol}://${domain}/delete/${screenshot.name}" </script> <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button> <div style="display:none;" id="form"> <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br> <div id="success"></div> <div id="error"></div> <button type="button" onclick="deleteSS()">Submit</button> </div> </div> </body> </html> <style> #success p { color:green; } #error p { color:maroon; } </style>`;
                     try {
                     fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (success) => {console.log(chalk.green`Successfully recieved ${screenshot.name}!`)});
                     }
@@ -124,7 +124,7 @@ app.post('/post', (req, res) => {
                     res.send(url);
 
                     var date = new Date();
-                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous"> --> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> </div> </body> </html>`;
+                    let htmlContent = `<html> <head> <title>Screenshot from ${date}</title> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/bootstrap.css"> <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css"> <link rel="stylesheet" href="https://plaguecraft.xyz/storage/assets/css/form.css"> <script src="https://awexxx.xyz/assets/js/screenshot.js"></script> <meta content="Awex's Screenshot from ${date}" property="og:title"> <meta content="${url}" property="og:url"> <meta content="${imgurl}" property="og:image"> <meta content="${process.env.embedcolor}" data-react-helmet="true" name="theme-color"> <link type="application/json+oembed" href="${process.env.oembed}" /> </head> <body> <div class="container"> <h3 style="text-align:center;">Screenshot from:<br> ${date}</h3> <br> <div class="jumbotron"> <div style="text-align:center;"> <img src="${imgurl}"> </div> </div> <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3> <script> var url="${protocol}://${domain}/delete/${screenshot.name}" </script> <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button> <div style="display:none;" id="form"> <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br> <div id="success"></div> <div id="error"></div> <button type="button" onclick="deleteSS()">Submit</button> </div> </div> </body> </html> <style> #success p { color:green; } #error p { color:maroon; } </style>`;
                     try {
                     fs.writeFile(__dirname + `/ss/${screenshot.name}.html`, htmlContent, (success) => {console.log(chalk.green`Successfully recieved ${screenshot.name}!`)});
                     }
@@ -139,7 +139,8 @@ app.post('/post', (req, res) => {
         }
     } else if (!header) {
         return res.status(403).send(JSON.stringify({ "status": 403, "message": "No secret header was supplied. Make sure ShareX is configured correctly."}))
-    } else if (!header === `${process.env.secret}`) {
+    } else if (header != process.env.secret) {
+        console.log(header)
         return res.status(403).send(JSON.stringify({ "status": 403, "message": "Secret was incorrect."}))
     }
 })

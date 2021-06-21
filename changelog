@@ -1,0 +1,7 @@
+6/21/21
+
+1 - Added delete route
+2 - Added delete button to HTML. Requires token to be entered into text box after clicking button.
+3 - Fixed an issue where 403's weren't being sent and led to nonstop loading then timeouts when the provided token was incorrect 
+4 - Added screenshot.js from my domain. You won't need to fork this, the URL is added in w/ the posted image.
+5 - Added this changelog!
