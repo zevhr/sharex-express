@@ -30,7 +30,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'))
-// app.use(express.static(__dirname + '/uploads'));
 app.use(fileUpload({
     createParentPath: true
 }));
@@ -162,9 +161,5 @@ app.post('/post', (req, res) => {
 const httpServer = http.createServer(app);
 const PORT = 5000;
 httpServer.listen(PORT, () => {
-console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
-\nNeed help? Let me know on the issues page or via my dev Discord (https://awexxx.xyz/discord)!
-\nTo get started, read the readme and POST an image via ShareX!
-\nYour Settings: Protocol: ${protocol}, Domain: ${domain}, Embed Color ${process.env.embedcolor}
-\nScript now running on`, chalk.red(`http://localhost:${PORT}/`, '\n--------------------------\n')));
+console.log('OLD OLD OLD');
 }); 

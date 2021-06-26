@@ -1,2 +1,5 @@
 .env
 node_modules
+storage.db
+app/modules
+index.js
