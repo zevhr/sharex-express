@@ -104,5 +104,4 @@ If you run into any errors or issues, please let me know via the <a href="https:
 [x] - A possible route to delete screenshots if authed with token<br>
 [x] - Under-the-hood rewrite (messy, some stuff is already legacy to me lmao)<br>
 [x] - Over-the-hood rewrite (saves you some space)<br>
-[x] - SQLite support for metadata storage<br>
-[ ] - Add alternative support for SQL storage
+[x] - SQLite support for metadata storage

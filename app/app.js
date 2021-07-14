@@ -16,6 +16,7 @@ const fs = require('fs');
 const morgan = require('morgan');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
+const mysql = require('mysql');
 require('dotenv').config()
 
 // Env Variables (easier to call when deving lmao)
@@ -34,18 +35,7 @@ app.use(fileUpload({
     createParentPath: true
 }));
 
-app.get('/', (req, res) => {
-    res.send({ "status": 200, "app-name": `${appname}` })
-})
-
-// if (process.env.sql === true) {
-//     const pool = require(`./modules/db`);
-//     app.set('pool', pool);
-// }
-// SQL support coming soon ;))
-
-if (process.env.sqlite === `true` && !fs.existsSync(__dirname + '/storage.db')) {
-    const datab = new sqlite3.Database(__dirname + '/storage.db');
+if(!fs.existsSync(__dirname + '/storage.db')) {
     datab.run(`CREATE TABLE IF NOT EXISTS "screenshots" (
         "title"	TEXT UNIQUE,
         "date"	TEXT,
@@ -54,6 +44,7 @@ if (process.env.sqlite === `true` && !fs.existsSync(__dirname + '/storage.db')) 
     );`, (error, row) => {
         if(error) {
             console.log(error)
+             return;
         }
         console.log('DB successfully created (this only happens on first launch or if the db gets deleted).')
     })
@@ -61,39 +52,40 @@ if (process.env.sqlite === `true` && !fs.existsSync(__dirname + '/storage.db')) 
 
 const db = new sqlite3.Database(__dirname + '/storage.db');
 
+app.get('/', (req, res) => {
+    res.send({ "status": 200, "app-name": `${appname}` })
+})
+
 app.post('/post', (req, res) => {
     const header = req.get('secret');
-
     if(header === `${process.env.secret}`) {
 
     if(!req.files) {
-        return res.status(500).send({ "status": 500, "message": "No files were sent."})
+        return res.status(500).send({ "status": 500, "message": "No files were sent with your request." })
     } else if (!fs.existsSync(__dirname + '/uploads/')) {
-        return res.status(500).send({ "status": 500, "message": "No uploads folder was detected in the root directory." })
+        return res.status(500).send({ "status": 500, "message": "The uploads directory doesn't exist." })
     }
+        try {
+            let screenshot = req.files.sharex
+            screenshot.mv(__dirname + '/uploads/' + screenshot.name)
 
-    try {
-        let screenshot = req.files.sharex
-        screenshot.mv(__dirname + '/uploads/' + screenshot.name)
+            const date = new Date();
+            let imgurl = `${protocol}://${domain}/upload?view=${screenshot.name}`
+            let url = `${protocol}://${domain}/view?photo=${screenshot.name}`
 
-        const date = new Date();
-        let imgurl = `${protocol}://${domain}/upload?view=${screenshot.name}`
-        let url = `${protocol}://${domain}/view?photo=${screenshot.name}`
+            const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ('${date}','${screenshot.name}','${url}','${imgurl}')`, (error, row) => {
+                const data = db.run(`SELECT * FROM screenshots WHERE title='${screenshot.name}'`)
+            })
 
-        const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ('${date}','${screenshot.name}','${url}','${imgurl}')`, (error, row) => {
-            const data = db.run(`SELECT * FROM screenshots WHERE title='${screenshot.name}'`)
-        })
-
-        res.send(url)
-
-    }
-    catch(err) {
-        console.log(err)
+            res.send(url)
+        }
+        catch(err) {
+            console.log(err)
         }
     } else if (!header) {
-        res.status(403).send({ "status": 403, "message": "No secret header was supplied." })
+        res.send(403).send({ "status": 403, "message": "No header was supplied." })
     } else if (header != process.env.secret) {
-        res.status(403).send({ "status": 403, "message": "A secret header was supplied, but was incorrect." })
+        res.send(403).send({ "status": 403, "message": "A secret header was supplied, but was incorrect."})
     }
 })
 
@@ -120,24 +112,23 @@ app.delete('/delete/:id', (req, res) => {
     }
 })
 
-app.get('/screenshots', (req, res) => { // JSON Response of all screenshots
-    if(req.query.title === undefined) {
-        db.all('SELECT * FROM screenshots', (error, row) => {
-            res.send({ "response": row });
-            if(error) {
-                console.log(error);
-            }
-        });
-    } else if (req.query.title) {
-        db.get(`SELECT * FROM screenshots WHERE title = '${req.query.title}'`, (error, row) => {
-            res.send({ "response": row });
-            if(error) {
-                console.log(error);
-            }
-        });
-    }
+app.get('/screenshots', (req, res) => {
+    if (req.query.title === undefined) {
+            db.all(`SELECT * FROM screenshots`, (error, row) => {
+                res.send({ "response": row });
+                if(error) {
+                    console.log(error)
+                    }
+                })
+    } else if (req.query.title != undefined) {
+            db.get(`SELECT * FROM screenshots WHERE title = '${req.query.title}'`, (error, row) => {
+                res.send({ "response": row})
+                if(error) {
+                    console.log(error)
+                }
+            })
+    } 
 })
-
 
 // STRICTLY File sending endpoints
 app.get('/upload', (req, res) => {
@@ -173,5 +164,5 @@ httpServer.listen(1337, () => {
     \nNeed help? Let me know on the issues page or via my dev Discord (https://awexxx.xyz/discord)!
     \nTo get started, read the readme and POST an image via ShareX!
     \nYour Settings: Protocol: ${protocol}, Domain: ${domain}
-    \nScript now running on`, chalk.red(`http://localhost:1337/`, '\n--------------------------\n')));
+    \nScript now running on`, chalk.red(`http://localhost:1337/ (new)`, '\n--------------------------\n')));
     }); 

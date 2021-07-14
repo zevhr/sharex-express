@@ -1,11 +1,5 @@
-6/26/21
+7/14/21
 
-1 - Rewrote backend
-2 - Added npm start script
-3 - Changed how content is loaded
-4 - Added 404 page if it isn't correct/can't find the file
-5 - Changed how URLs work
-6 - Removed embed color option from embed (you can still change this manually via the HTML in app/frontend/index.html)
-7 - Removed the option to have a custom oEmbed link (you can also still change this via the HTML in above path)
-8 - Changed how file data is stored. Can use SQLite (default) or SQL (coming soon). Only stores photo metadata, not the file its self (obviously)
-9 - Added ability to customize app-name in .env.
+1 - Removed SQL Support for a bit - didn't work well lmao
+2 - Rewrote some endpoints for the sake of them being messy
+3 - Made some changes to the frontend js
