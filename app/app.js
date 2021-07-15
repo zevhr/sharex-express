@@ -36,6 +36,7 @@ app.use(fileUpload({
 }));
 
 if(!fs.existsSync(__dirname + '/storage.db')) {
+    const datab = new sqlite3.Database(__dirname + '/storage.db');
     datab.run(`CREATE TABLE IF NOT EXISTS "screenshots" (
         "title"	TEXT UNIQUE,
         "date"	TEXT,
