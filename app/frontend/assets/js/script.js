@@ -1,6 +1,3 @@
-// This is not where the script is grabbed from, but it is the source code.
-// It's also available to fetch from https://awexxx.xyz/assets/js/screenshot.js.
-
 async function getFileUrl() {
     const params = new URLSearchParams(window.location.search)
     let title = params.get('photo')
@@ -10,6 +7,7 @@ async function getFileUrl() {
         if(title) {
             try{
     const { response } = await fetch(apiurl).then(response => response.json());
+    console.log(response)
     let date = response.date;
     let photourl = response.directurl;
     var dateStr = new Date();
