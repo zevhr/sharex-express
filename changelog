@@ -1,5 +1,6 @@
-7/14/21
+9/8/21
 
-1 - Removed SQL Support for a bit - didn't work well lmao
-2 - Rewrote some endpoints for the sake of them being messy
-3 - Made some changes to the frontend js
+- Implemented server-sided dynamic meta tags
+- Fixed random crashing issues
+- Fixed database issues
+- Added simple /profile page 

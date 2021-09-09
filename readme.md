@@ -100,7 +100,7 @@ If you run into any errors or issues, please let me know via the <a href="https:
 [x] - Make all images embed in actual embeds with date, time etc<br>
 [x] - Fix issue where images go outside of the jumbotron<br>
 [x] - Fix issue where <strong>Error writing file!</strong> shows even when there isn't an issue writing html files<br>
-[ ] - Possible profile page with all screenshots, with the ability to make them private<br>
+[x] - Possible profile page with all screenshots, with the ability to make them private<br>
 [x] - A possible route to delete screenshots if authed with token<br>
 [x] - Under-the-hood rewrite (messy, some stuff is already legacy to me lmao)<br>
 [x] - Over-the-hood rewrite (saves you some space)<br>
