@@ -103,7 +103,7 @@ app.get('/view', (req, res) => {
                     return res.status(404).send({ "status": 404, "message": "That photo was not found." })
                 }
 
-                const filePath = path.resolve(__dirname, './frontend/', 'index.html');
+                const filePath = path.resolve(__dirname, './frontend/', 'viewer.html');
         
                 // read in the index.html file
                 fs.readFile(filePath, 'utf8', function (err,data) {
@@ -224,7 +224,7 @@ app.get('/assets/js/:id', (req, res) => {
 })
 
 const httpServer = http.createServer(app)
-    httpServer.listen(3000, () => {
+    httpServer.listen(process.env.port, () => {
     console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
     \nNeed help? Let me know on the issues page!
     \nTo get started, read the readme and POST an image via ShareX!
