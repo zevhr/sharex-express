@@ -1,6 +1,5 @@
-9/8/21
+9/10/21
 
-- Implemented server-sided dynamic meta tags
-- Fixed random crashing issues
-- Fixed database issues
-- Added simple /profile page 
+- Fixed dynamic port (process.env.port wasn't what the app was listening to)
+- Fixed error catching on /screenshots
+- Added express.static path for static files

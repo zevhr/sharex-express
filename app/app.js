@@ -29,6 +29,7 @@ const app = express();
 
 // Use this stuff dammit!
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/frontend'))
 app.use(cors());
 app.use(morgan('dev'))
 app.use(fileUpload({
@@ -80,7 +81,6 @@ app.post('/post', (req, res) => {
                 if (error) {
                     console.log(error)
                 }
-                // return (res.status(200).send(row))
             })
 
             res.send(url)
@@ -166,19 +166,19 @@ app.get('/profile', (req, res) => {
 app.get(`/screenshots`, (req, res) => {
     if (req.query.title === undefined) {
         db.all(`SELECT * FROM screenshots`, (error, row) => {
-            res.send({ "response": row });
             if(error) {
                 console.log(error)
-                return res.status(500).send({ "status": 500, "errors": error.name, "message": "Something went wrong while running database tasks to display data." })
-                }
+                return res.send({ "status": 500, "errors": error.message, "message": "Something went wrong while running database tasks to display data." })
+            }
+            res.send({ "response": row });
             })
     } else if (req.query.title != undefined) {
             db.get(`SELECT * FROM screenshots WHERE title = '${req.query.title}'`, (error, row) => {
-                res.send({ "response": row})
                 if(error) {
                     console.log(error)
-                    return res.status(500).send({ "status": 500, "errors": error.name, "message": "Something went wrong while running database tasks to display data." })
+                    return res.send({ "status": 500, "errors": error.message, "message": "Something went wrong while running database tasks to display data." })
                 }
+                res.send({ "response": row})
             })
     }
 })
@@ -226,7 +226,7 @@ app.get('/assets/js/:id', (req, res) => {
 const httpServer = http.createServer(app)
     httpServer.listen(3000, () => {
     console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
-    \nNeed help? Let me know on the issues page or via my dev Discord (https://awexxx.xyz/discord)!
+    \nNeed help? Let me know on the issues page!
     \nTo get started, read the readme and POST an image via ShareX!
     \nYour Settings: Protocol: ${protocol}, Domain: ${domain}
     \nScript now running on`, chalk.red(`${protocol}://${domain}:${process.env.port}/`, '\n--------------------------\n')));
