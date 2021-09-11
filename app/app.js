@@ -45,7 +45,7 @@ if(!fs.existsSync(__dirname + '/storage.db')) {
         "url"	TEXT UNIQUE
     );`, (error, row) => {
         if(error) {
-            console.log(error)
+            console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
              return;
         }
         console.log('DB successfully created (this only happens on first launch or if the db gets deleted).')
@@ -61,13 +61,13 @@ app.get('/', (req, res) => {
 app.post('/post', (req, res) => {
     const header = req.get('secret');
     if (header === `${process.env.secret}`) {
+
         if (!req.files) {
             return res.status(500).send({ "status": 500, "message": "No files were sent with your request." })
         } else if (!fs.existsSync(__dirname + '/uploads/')) {
             return res.status(500).send({ "status": 500, "message": "The uploads directory doesn't exist." })
         }
 
-        try {
             let screenshot = req.files.sharex
             screenshot.mv(__dirname + '/uploads/' + screenshot.name.toLowerCase())
 
@@ -79,24 +79,21 @@ app.post('/post', (req, res) => {
 
             const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ('${est}','${screenshot.name.toLowerCase()}','${url}','${imgurl}')`, (error, row) => {
                 if (error) {
-                    console.log(error)
+                    console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+                    return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, I couldn't insert ${screenshot.name} into the database.`})
                 }
             })
 
             res.send(url)
-        }
-        catch(err) {
-            return res.status(500).send({ "status": 500, "errors": err.name, "message": `Something went wrong while running POST tasks for ${screenshot.name}.`})
-        }
     }
 })
 
 app.get('/view', (req, res) => {
     if(req.query.photo) {
-        try {
             const scd = db.get(`SELECT * FROM screenshots WHERE title='${req.query.photo}'`, (error, row) => {
                 if(error) {
-                    console.log(error)
+                    console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+                    return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})
                 }
 
                 if(!row) {
@@ -108,13 +105,14 @@ app.get('/view', (req, res) => {
                 // read in the index.html file
                 fs.readFile(filePath, 'utf8', function (err,data) {
                   if (err) {
-                    return console.log(err);
+                    console.log(err);
+                    return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for profile.html. I've provided the filepath to this file, make sure it exists!`})
                   }
                   
                   // replace the special strings with server generated strings
                   data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
                   data = data.replace(/\$OG_BIGIMG/g, `${row.directurl}`)
-                  data = data.replace(/\$OG_DATE/g, `${row.date}`)
+                  data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
                   data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`)
                   data = data.replace(/\$OG_URL/g, `${row.url}`)
                   data = data.replace(/\$OG_SITENAME/g, `${process.env.appname}`)
@@ -123,11 +121,6 @@ app.get('/view', (req, res) => {
                   res.send(result);
                 });
             })
-        }
-        catch(err) {
-            console.log(err)
-            return res.status(500).send( { "status": 500, "errors": err.name } )
-        }
     } else {
         return res.status(404).send({ "status": 404, "message": "You need to provide a photo to search." })
     }
@@ -149,7 +142,8 @@ app.get('/profile', (req, res) => {
         // read in the index.html file
         fs.readFile(filePath, 'utf8', function (err,data) {
           if (err) {
-            return console.log(err);
+            console.log(err);
+            return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for profile.html. I've provided the filepath to this file, make sure it exists!`})
           }
           
           permittedValues = [];
@@ -190,6 +184,9 @@ app.get(`/screenshots`, (req, res) => {
 app.get('/screenshots/selectone', (req, res) => {
     if (req.query.title && req.query.field) {
         db.get(`SELECT ${req.query.field} FROM screenshots WHERE title='${req.query.title}'`, (error, row) => {
+            if(error) {
+                return res.status(500).send({ "status": 500, "error": error.message, "message": "Sorry, something went wrong when querying the database." })
+            }
             return res.status(200).send({ "status": 200, "response": row })
         })
     }
@@ -198,33 +195,37 @@ app.get('/screenshots/selectone', (req, res) => {
 app.delete('/delete/:id', (req, res) => {
     const header = req.get('secret');
     if(header === `${process.env.secret}`) {
-        if(fs.existsSync(__dirname + `/uploads/${req.params.id}`)) {
-            fs.unlink(__dirname + `/uploads/${req.params.id}`, (err) => {
+        const filepath = `${__dirname}/uploads/${req.params.id}`
+
+        if (fs.existsSync(filepath)) {
+            fs.unlink(filepath, (err) => {
                 if(err) {
-                    console.log(err)
+                    return res.status(500).send({ "status": 500, "error": err.message, "message": "Sorry, something went wrong when trying to delete that screenshot"})
+                } else {
+                    db.run(`DELETE FROM screenshots WHERE title='${req.params.id}'`)
+                    return res.send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
                 }
-                db.run(`DELETE FROM screenshots WHERE title='${req.params.id}'`)
-                console.log(chalk.red.bold`${req.params.id} was deleted.`)
             })
-            res.status(200).send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
-        } else if (!fs.existsSync(__dirname + `/uploads/${req.params.id}`)) {
-            res.status(404).send({ "status": 404, "message": `${req.params.id} wasn't found on the server.`})
-            console.log(chalk.red.bold`I couldn't find ${req.params.id}, sorry.`)
+            
+        } else if (!fs.existsSync(filepath)) {
+            return res.status(404).send({ "status": 404, "message": `Sorry, ${req.params.id} wasn't found on the server.`})
         }
-    } else if (!header) {
-        res.status(403).send({ "status": 403, "message": "No secret header was supplied."})
-    } else if (header != process.env.secret) {
-        res.status(403).send({ "status": 403, "message": "The secret header was found but doesn't match the one specified." })
+        
+    } else {
+        headerError = null;
+        if(!header) {
+            headerError = `no-header-provided`
+        } else if (header !== `${process.env.secret}`) {
+            headerError = `incorrect-header`
+        }
+
+        return res.status(401).send({ "status": 401, "error": headerError })
     }
 })
 
 // STRICTLY File sending endpoints
 app.get('/upload', (req, res) => {
     res.download(__dirname + `/uploads/${req.query.view}`)
-})
-
-app.get('/assets/js/:id', (req, res) => {
-    res.sendFile(__dirname + `/frontend/assets/js/${req.params.id}`)
 })
 
 const httpServer = http.createServer(app)
