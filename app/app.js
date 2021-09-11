@@ -138,6 +138,10 @@ app.get('/profile', (req, res) => {
 
         if (error) {
             console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+        } else if (!row) {
+            const html = `<h3>No files were found in your table</h3>`
+            result = data.replace(/\$OG_DATA/g, `${html}`);
+            return res.send(result);
         }
 
         const filePath = path.resolve(__dirname, './frontend/', 'profile.html');
