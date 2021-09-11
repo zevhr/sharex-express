@@ -115,7 +115,7 @@ app.get('/view', (req, res) => {
                   data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
                   data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`)
                   data = data.replace(/\$OG_URL/g, `${row.url}`)
-                  data = data.replace(/\$OG_SITENAME/g, `${process.env.appname}`)
+                  data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
                   data = data.replace(/\$OG_COLOR/g, `${process.env.color}`)
                   result = data.replace(/\$OG_IMAGE/g, `${row.directurl}`);
                   res.send(result);
@@ -210,7 +210,7 @@ app.delete('/delete/:id', (req, res) => {
         } else if (!fs.existsSync(filepath)) {
             return res.status(404).send({ "status": 404, "message": `Sorry, ${req.params.id} wasn't found on the server.`})
         }
-        
+
     } else {
         headerError = null;
         if(!header) {
