@@ -17,7 +17,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
 const path = require('path')
-require('dotenv').config()
+require('dotenv').config({ path: __dirname+'/.env' })
 
 // Env Variables (easier to call when deving lmao)
 const protocol = process.env.protocol;
@@ -55,7 +55,11 @@ if(!fs.existsSync(__dirname + '/storage.db')) {
 const db = new sqlite3.Database(__dirname + '/storage.db');
 
 app.get('/', (req, res) => {
-    res.send({ "status": 200, "app-name": `${appname}` })
+    if (process.env.redirect === '' || !process.env.redirect) {
+        return res.send({ "status": 200, "app-name": `${appname}` })
+    } else {
+        return res.redirect(process.env.redirect)
+    }
 })
 
 app.post('/post', (req, res) => {
@@ -81,10 +85,10 @@ app.post('/post', (req, res) => {
                 if (error) {
                     console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
                     return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, I couldn't insert ${screenshot.name} into the database.`})
+                } else {
+                    return res.send(url)
                 }
             })
-
-            res.send(url)
     }
 })
 
@@ -111,9 +115,7 @@ app.get('/view', (req, res) => {
                   
                   // replace the special strings with server generated strings
                   data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
-                  data = data.replace(/\$OG_BIGIMG/g, `${row.directurl}`)
                   data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
-                  data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`)
                   data = data.replace(/\$OG_URL/g, `${row.url}`)
                   data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
                   data = data.replace(/\$OG_COLOR/g, `${process.env.color}`)
@@ -148,7 +150,7 @@ app.get('/profile', (req, res) => {
           
           permittedValues = [];
           for(i = 0; i < row.length; i++) {
-              permittedValues[i] = `<img src="` + row[i].directurl + '"><h3>Image Name: ' + row[i].title + '</h3>'
+              permittedValues[i] = `<img src="` + row[i].directurl + '"><h3><a href="' + row[i].url + '" target="_blank">Image Name: ' + row[i].title + '</a></h3>'
           }
   
           const html = permittedValues.join(`<br>`)
@@ -228,11 +230,20 @@ app.get('/upload', (req, res) => {
     res.download(__dirname + `/uploads/${req.query.view}`)
 })
 
-const httpServer = http.createServer(app)
-    httpServer.listen(process.env.port, () => {
-    console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
-    \nNeed help? Let me know on the issues page!
-    \nTo get started, read the readme and POST an image via ShareX!
-    \nYour Settings: Protocol: ${protocol}, Domain: ${domain}
-    \nScript now running on`, chalk.red(`${protocol}://${domain}:${process.env.port}/`, '\n--------------------------\n')));
-    }); 
+checkEnv();
+
+async function checkEnv() { 
+    if (!fs.existsSync(__dirname + `/.env`)) {
+        console.log(chalk.redBright.bold(`.env doesn't exist in ${__dirname}! Create it using .env.sample!`))
+        return process.exit(0)
+    } else {
+        const httpServer = http.createServer(app)
+        httpServer.listen(process.env.port, () => {
+        console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
+        \nNeed help? Let me know on the issues page!
+        \nTo get started, read the readme and POST an image via ShareX!
+        \nYour Settings: Protocol: ${protocol}, Domain: ${domain}
+        \nScript now running on`, chalk.red(`${protocol}://${domain}:${process.env.port}/`, '\n--------------------------\n')));
+        }); 
+    }
+}

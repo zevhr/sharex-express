@@ -1,5 +1,6 @@
-9/10/21
-
-- Fixed dynamic port (process.env.port wasn't what the app was listening to)
-- Fixed error catching on /screenshots
-- Added express.static path for static files
+9/15/21
+- Removed some useless meta tag changes
+- Added support for Twitter Cards & Snapchat Stickers 
+- Support for redirections from / endpoint
+- Added check for .env file
+- Fixed possible "Mixed Content" issue when deleting & added refresh post delete

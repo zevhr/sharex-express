@@ -2,7 +2,7 @@ async function deleteSS() {
         const params = new URLSearchParams(window.location.search)
         let title = params.get('photo')
         var secret = document.querySelector("#secret").value
-        const delfile = await fetch(`http://${window.location.host}/delete/${title}`, {
+        const delfile = await fetch(`/delete/${title}`, {
             method: "DELETE",
             headers: { "secret": `${secret}`}
         })
@@ -13,6 +13,7 @@ async function deleteSS() {
                 error.style.display = "none";
                 var success = document.getElementById("success");
                 success.style.display = "block";
+                window.location.reload();
             } else if (response.status === 403 || response.status === 404) {
                 var success = document.getElementById("success");
                 success.style.display = "none";
