@@ -15,8 +15,8 @@
 
 # <p align="center"> Now.. let's begin!</p>
 <p align="center">Clone/fork this repository to gain access to the files locally.<br>
-First, let's take a look at the .env.sample file. This is where all the goodies will be configured.<br>
-<strong>.env.sample</strong><br>
+First, let's take a look at the app/.env.sample file. This is where all the goodies will be configured.<br>
+<strong>app/.env.sample</strong><br>
 You'll need to make a few changes to this file. First, you'll need to make your own password.<br> This will ensure you are the only person uploading to your domain. We'll need to add this later.<br>
 You'll also want to change the domain and protocol to what you require. If you have an SSL cert, set it as <strong>https</strong>. If you don't, set it as http.<br>
 If you'd like, you can also change your app name here.<br>

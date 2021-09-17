@@ -129,8 +129,26 @@ app.get('/view', (req, res) => {
 })
 
 app.get('/profile', (req, res) => {
-    db.all(`SELECT * FROM screenshots`, (error, row) => {
+    if(process.env.password_protect_profile === `true`) {
+        const reject = () => {
+            res.setHeader('www-authenticate', 'Basic')
+            res.status(401).send({ "status": 401, "message": "Incorrect credentials. Access to /profile denied."})
+          }
+        
+          const authorization = req.headers.authorization
+        
+          if(!authorization) {
+            return reject()
+          }
+        
+          const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
+        
+          if(! (username === `${process.env.user}` && password === `${process.env.password}`)) {
+            return reject()
+          }
+    }
 
+    db.all(`SELECT * FROM screenshots`, (error, row) => {
         if (error) {
             console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
         } else if (!row) {
