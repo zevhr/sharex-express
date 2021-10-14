@@ -17,6 +17,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
 const path = require('path')
+const axios = require('axios').default;
 require('dotenv').config({ path: __dirname+'/.env' })
 
 // Env Variables (easier to call when deving lmao)
@@ -92,7 +93,7 @@ app.post('/post', (req, res) => {
     }
 })
 
-app.get('/view', (req, res) => {
+app.get('/view', async (req, res) => {
     if(req.query.photo) {
             const scd = db.get(`SELECT * FROM screenshots WHERE title='${req.query.photo}'`, (error, row) => {
                 if(error) {
@@ -107,14 +108,24 @@ app.get('/view', (req, res) => {
                 const filePath = path.resolve(__dirname, './frontend/', 'viewer.html');
         
                 // read in the index.html file
-                fs.readFile(filePath, 'utf8', function (err,data) {
+                fs.readFile(filePath, 'utf8', async function (err,data) {
                   if (err) {
                     console.log(err);
                     return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for profile.html. I've provided the filepath to this file, make sure it exists!`})
                   }
                   
-                  // replace the special strings with server generated strings
-                  data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
+                  // Dynamic meta tags, has to be server-side since crawlers don't generally run javascript
+                  if (process.env.dadjoke === 'true') {
+                      const dadjoke = await axios.get(`https://icanhazdadjoke.com`, {
+                          method: 'GET',
+                          headers: { 'Accept': 'application/json', 'user-agent': 'Awex - ShareX-Express (https://github.com/awexxx/sharex-express), hello!' }
+                      })
+                    
+                      data = data.replace(/\$OG_TITLE/g, `${dadjoke.data.joke}`);
+                  } else {
+                    data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
+                  }
+
                   data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
                   data = data.replace(/\$OG_URL/g, `${row.url}`)
                   data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
