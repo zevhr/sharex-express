@@ -1,6 +1,4 @@
-9/15/21
-- Removed some useless meta tag changes
-- Added support for Twitter Cards & Snapchat Stickers 
-- Support for redirections from / endpoint
-- Added check for .env file
-- Fixed possible "Mixed Content" issue when deleting & added refresh post delete
+10/14/21
+
+- Added actual error page
+- redid the viewer

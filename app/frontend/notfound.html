@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <title>Photo Not Found</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=0.1">
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/header.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <!-- ----- Meta Tags // Embed ----- -->
+
+    <!-- Classic Discord Embed -->
+    <meta content="Photo Not Found" property="og:title">
+    <meta content="https://github.com/awexxx/sharex-express" property="og:url">
+</head>
+
+<div class="header">
+    <a href="#" class="logo">Awex's ShareX-Express</a>
+    <div class="header-right">
+      <a class="active" href="https://github.com/awexxx/sharex-express">GitHub Repository</a>
+    </div>
+  </div>
+
+  <h3>Hey, where did you come from?</h3>
+    <p>The file you're looking for (<span id="filename"></span>) doesn't exist on your server! <strong>Did you upload it right?</strong><br>
+    If you believe this is an error, feel free to <a href="https://github.com/awexxx/sharex-express/issues" target="_blank">open an issue.</a><br><br>
+        <button type="button" onclick="history.back()">Retry?</button>
+
+  <script>
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+
+    var filename = params.filename
+    document.querySelector('#filename').innerText = filename
+  </script>

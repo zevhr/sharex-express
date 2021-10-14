@@ -102,7 +102,7 @@ app.get('/view', async (req, res) => {
                 }
 
                 if(!row) {
-                    return res.status(404).send({ "status": 404, "message": "That photo was not found." })
+                    return res.redirect(`/notfound.html?filename=${req.query.photo}`)
                 }
 
                 const filePath = path.resolve(__dirname, './frontend/', 'viewer.html');

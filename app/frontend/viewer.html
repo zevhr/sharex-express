@@ -1,10 +1,11 @@
 <html>
 
 <head>
-    <title id="title">$OG_SITENAME</title>
+    <title>$OG_SITENAME</title>
     <meta name="viewport" content="width=device-width,minimum-scale=0.1">
     <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="https://awexxx.xyz/assets/css/screenshot.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/header.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     
     <!-- ----- Meta Tags // Embed ----- -->
 
@@ -14,8 +15,7 @@
     <meta content="$OG_URL" property="og:url">
     <meta content="$OG_COLOR" name="theme-color" data-react-helmet="true">
     <meta property="og:image" content="$OG_IMAGE">
-    <meta content="#7289DA" data-react-helmet="true" name="theme-color" />
-    <link type="application/json+oembed" href="https://gist.githubusercontent.com/awexxx/9daefb263b9d257a2fc950a4de2624e3/raw/754c8f625e6bfa01be1fdec0552fa4e2717ebd68/oembed.json" />
+    <link type="application/json+oembed" href="/json/oembed.json" />
     <!-- Snapchat Embeds -->
     <meta property="snap:sticker" content="$OG_IMAGE">
     <!-- Twitter Embeds -->
@@ -23,88 +23,28 @@
     <meta property="twitter:creator" content="@lulawex">
 </head>
 
-<div id="body">
-<body>
-    <div class="container">
-        <div id="date" style="text-align:center;"><h3>$OG_DATE</h3></div>
-        <div class="jumbotron" id="photo">
-            <div id="jumbo-internal" style="text-align:center;"><img src="$OG_IMAGE"></div>
-        </div>
-        <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3>
-        <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button>
-        <div style="display:none;" id="form">
-            <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br>
-            <div id="success" style="display:none;"><p>Success!</p></div>
-            <div id="err" style="display:none;"><p>Failed to issue DELETE request<br>Response code: <span id="code"></span></span><br>Double check your token.</p></div>
-            <button type="button" onclick="deleteSS()">Submit</button>
-        </div>
+<div class="header">
+    <a href="#" class="logo">$OG_SITENAME</a>
+    <div class="header-right">
+      <a class="active" href="https://github.com/awexxx/sharex-express">GitHub Repository</a>
     </div>
+  </div>
 
-    <script src="/assets/js/script.js"></script>
-
-</body>
+  <div class="container">
+    <div id="date" style="text-align:center;"><h3>$OG_DATE</h3></div>
+    <div class="jumbotron" id="photo">
+        <div id="jumbo-internal" style="text-align:center;"><img src="$OG_IMAGE"></div>
+    </div>
+    <h3><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express">GitHub!</a></i></h3>
+    <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button>
+    <div style="display:none;" id="form">
+        <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br>
+        <div id="success" style="display:none;"><p>Success!</p></div>
+        <div id="err" style="display:none;"><p>Failed to issue DELETE request<br>Response code: <span id="code"></span></span><br>Double check your token.</p></div>
+        <button type="button" onclick="deleteSS()">Submit</button>
+    </div>
 </div>
 
-<div id="fourohfour" style="display:none;">
-    <style>
-
-        #fourohfour h3 {
-            color:white;
-            position: absolute;
-            top:  40%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-        }
-
-        #fourohfour p {
-            color:white;
-            position: absolute;
-            top:  45%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-        }
-        
-        input[type=text], select, textarea {
-    width: 20%; /* Full width */
-    padding: 12px; /* Some padding */ 
-    border: 1px solid #ccc; /* Gray border */
-    border-radius: 4px; /* Rounded borders */
-    box-sizing: border-box; /* Make sure that padding and width stays in place */
-    margin-top: 6px; /* Add a top margin */
-    margin-bottom: 16px; /* Bottom margin */
-    resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
-  }
-  
-  /* Style the submit button with a specific background color etc */
-  button[type=button] {
-    background-color: gray;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  /* When moving the mouse over the submit button, add a darker green color */
-  input[type=submit]:hover {
-    background-color: #45a049;
-  }
-
-
-    </style>
-    <h3>You've hit a 404!</h3><br>
-        <p>The photo you're trying to view doesn't exist!<br>
-        Make sure the photo title after the <code>view?photo=</code> in the URL is correct.</p>
-</div>
+<script src="/assets/js/script.js"></script>
 
 </html>
-
-<style>
-    #success p {
-        color:green;
-    }
-
-    #err p {
-        color:maroon;
-    }
-</style>
