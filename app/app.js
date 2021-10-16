@@ -8,79 +8,84 @@
 ////////////////////////////////////////////////////////////////
 
 const express = require('express');
-const http = require('http');
-const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-const chalk = require('chalk');
 const fs = require('fs');
+const chalk = require('chalk');
 const morgan = require('morgan');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
-const path = require('path')
 const axios = require('axios').default;
-require('dotenv').config({ path: __dirname+'/.env' })
+require('dotenv').config({ path: __dirname + '/.env' })
 
-// Env Variables (easier to call when deving lmao)
-const protocol = process.env.protocol;
-const domain = process.env.domain;
-const appname = process.env.appname;
-
-// Define Express App
 const app = express();
 
-// Use this stuff dammit!
-app.use(bodyParser.json());
-app.use(express.static(__dirname + '/frontend'))
+app.use(express.json());
+app.use(express.static(__dirname + '/frontend'));
 app.use(cors());
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 app.use(fileUpload({
     createParentPath: true
 }));
 
-if(!fs.existsSync(__dirname + '/storage.db')) {
-    const datab = new sqlite3.Database(__dirname + '/storage.db');
-    datab.run(`CREATE TABLE IF NOT EXISTS "screenshots" (
-        "title"	TEXT UNIQUE,
-        "date"	TEXT,
-        "directurl"	TEXT UNIQUE,
-        "url"	TEXT UNIQUE
-    );`, (error, row) => {
-        if(error) {
-            console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
-             return;
-        }
-        console.log('DB successfully created (this only happens on first launch or if the db gets deleted).')
-    })
-}
-
-const db = new sqlite3.Database(__dirname + '/storage.db');
-
-app.get('/', (req, res) => {
-    if (process.env.redirect === '' || !process.env.redirect) {
-        return res.send({ "status": 200, "app-name": `${appname}` })
-    } else {
-        return res.redirect(process.env.redirect)
+// Database creation for the cool data storage stuff ;p
+var db = new sqlite3.Database(__dirname + '/storage.db');
+    if(!fs.existsSync(__dirname + '/storage.db')) {
+        db.run(`CREATE TABLE IF NOT EXISTS "screenshots" (
+            "title"	TEXT UNIQUE,
+            "date"	TEXT,
+            "directurl"	TEXT UNIQUE,
+            "url"	TEXT UNIQUE
+        );`, (error, row) => {
+            if(error) {
+                console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+                return;
+            }
+            console.log('DB successfully created (this only happens on first launch or if the db gets deleted).')
+        })
     }
-})
 
-app.post('/post', (req, res) => {
-    const header = req.get('secret');
-    if (header === `${process.env.secret}`) {
-
-        if (!req.files) {
-            return res.status(500).send({ "status": 500, "message": "No files were sent with your request." })
-        } else if (!fs.existsSync(__dirname + '/uploads/')) {
-            return res.status(500).send({ "status": 500, "message": "The uploads directory doesn't exist." })
+    // Endpoints
+    app.get('/', (req, res) => {
+        if (process.env.redirect === 'no_redirect' || !process.env.redirect) {
+            return res.send({ "status": 200, "app-name": `${appname}` })
+        } else {
+            return res.redirect(process.env.redirect)
         }
+    })
+
+    app.get('/settings', (req, res) => {
+        res.send({ "status": 200, 
+        "settings": { 
+            "appname": `${process.env.appname}`,
+            "domain": `${process.env.domain}`, 
+            "port": process.env.port, 
+            "redirectto": `${process.env.redirect}`, 
+            "customization": { 
+                "embedColor": `${process.env.color}`,
+                "dadjoke": process.env.dadjoke
+                }
+            } 
+        })
+    })
+
+    app.post('/post', async (req, res) => {
+        const header = req.get('secret');
+        if (header === `${process.env.secret}`) {
+            if (!req.files) {
+                console.log(chalk.redBright.bold(`No files were uploaded with that!`))
+                return res.status(500).send({ "status": 500, "message": "No files were sent with your request." })
+            } else if (!fs.existsSync(__dirname + '/frontend/uploads/')) {
+                console.log(chalk.redBright.bold(`The uploads directory doesn't exist!`))
+                return res.status(500).send({ "status": 500, "message": "The uploads directory doesn't exist." })
+            }
 
             let screenshot = req.files.sharex
-            screenshot.mv(__dirname + '/uploads/' + screenshot.name.toLowerCase())
+            screenshot.mv(__dirname + '/frontend/uploads/' + screenshot.name.toLowerCase());
 
-            // Date & URL Stortage
-            let date = new Date();
-            let est = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
-            let imgurl = `${protocol}://${domain}/upload?view=${screenshot.name.toLowerCase()}`;
-            let url = `${protocol}://${domain}/view?photo=${screenshot.name.toLowerCase()}`;
+            // Data stuff lul
+            let est = Date().toLocaleString(`en-US`, { timeZone: `America/New_York` });
+            let imgurl = `${process.env.protocol}://${process.env.domain}/uploads/${screenshot.name.toLowerCase()}`
+            let url = `${process.env.protocol}://${process.env.domain}/view?photo=${screenshot.name.toLowerCase()}`;
 
             const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ('${est}','${screenshot.name.toLowerCase()}','${url}','${imgurl}')`, (error, row) => {
                 if (error) {
@@ -90,189 +95,88 @@ app.post('/post', (req, res) => {
                     return res.send(url)
                 }
             })
-    }
-})
-
-app.get('/view', async (req, res) => {
-    if(req.query.photo) {
-            const scd = db.get(`SELECT * FROM screenshots WHERE title='${req.query.photo}'`, (error, row) => {
-                if(error) {
-                    console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
-                    return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})
-                }
-
-                if(!row) {
-                    return res.redirect(`/notfound.html?filename=${req.query.photo}`)
-                }
-
-                const filePath = path.resolve(__dirname, './frontend/', 'viewer.html');
-        
-                // read in the index.html file
-                fs.readFile(filePath, 'utf8', async function (err,data) {
-                  if (err) {
-                    console.log(err);
-                    return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for profile.html. I've provided the filepath to this file, make sure it exists!`})
-                  }
-                  
-                  // Dynamic meta tags, has to be server-side since crawlers don't generally run javascript
-                  if (process.env.dadjoke === 'true') {
-                      const dadjoke = await axios.get(`https://icanhazdadjoke.com`, {
-                          method: 'GET',
-                          headers: { 'Accept': 'application/json', 'user-agent': 'Awex - ShareX-Express (https://github.com/awexxx/sharex-express), hello!' }
-                      })
-                    
-                      data = data.replace(/\$OG_TITLE/g, `${dadjoke.data.joke}`);
-                  } else {
-                    data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
-                  }
-
-                  data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
-                  data = data.replace(/\$OG_URL/g, `${row.url}`)
-                  data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
-                  data = data.replace(/\$OG_COLOR/g, `${process.env.color}`)
-                  result = data.replace(/\$OG_IMAGE/g, `${row.directurl}`);
-                  res.send(result);
-                });
-            })
-    } else {
-        return res.status(404).send({ "status": 404, "message": "You need to provide a photo to search." })
-    }
-})
-
-app.get('/profile', (req, res) => {
-    if(process.env.password_protect_profile === `true`) {
-        const reject = () => {
-            res.setHeader('www-authenticate', 'Basic')
-            res.status(401).send({ "status": 401, "message": "Incorrect credentials. Access to /profile denied."})
-          }
-        
-          const authorization = req.headers.authorization
-        
-          if(!authorization) {
-            return reject()
-          }
-        
-          const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
-        
-          if(! (username === `${process.env.user}` && password === `${process.env.password}`)) {
-            return reject()
-          }
-    }
-
-    db.all(`SELECT * FROM screenshots`, (error, row) => {
-        if (error) {
-            console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
-        } else if (!row) {
-            const html = `<h3>No files were found in your table</h3>`
-            result = data.replace(/\$OG_DATA/g, `${html}`);
-            return res.send(result);
         }
-
-        const filePath = path.resolve(__dirname, './frontend/', 'profile.html');
-        
-        // read in the index.html file
-        fs.readFile(filePath, 'utf8', function (err,data) {
-          if (err) {
-            console.log(err);
-            return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for profile.html. I've provided the filepath to this file, make sure it exists!`})
-          }
-          
-          permittedValues = [];
-          for(i = 0; i < row.length; i++) {
-              permittedValues[i] = `<img src="` + row[i].directurl + '"><h3><a href="' + row[i].url + '" target="_blank">Image Name: ' + row[i].title + '</a></h3>'
-          }
-  
-          const html = permittedValues.join(`<br>`)
-
-          data = data.replace(/\$OG_SITENAME/g, `${process.env.appname}`)
-          result = data.replace(/\$OG_DATA/g, `${html}`)
-
-          res.send(result);
-        });
     })
-})
 
-app.get(`/screenshots`, (req, res) => {
-    if (req.query.title === undefined) {
-        db.all(`SELECT * FROM screenshots`, (error, row) => {
-            if(error) {
-                console.log(error)
-                return res.send({ "status": 500, "errors": error.message, "message": "Something went wrong while running database tasks to display data." })
-            }
-            res.send({ "response": row });
-            })
-    } else if (req.query.title != undefined) {
-            db.get(`SELECT * FROM screenshots WHERE title = '${req.query.title}'`, (error, row) => {
-                if(error) {
-                    console.log(error)
-                    return res.send({ "status": 500, "errors": error.message, "message": "Something went wrong while running database tasks to display data." })
-                }
-                res.send({ "response": row})
-            })
-    }
-})
-
-app.get('/screenshots/selectone', (req, res) => {
-    if (req.query.title && req.query.field) {
-        db.get(`SELECT ${req.query.field} FROM screenshots WHERE title='${req.query.title}'`, (error, row) => {
-            if(error) {
-                return res.status(500).send({ "status": 500, "error": error.message, "message": "Sorry, something went wrong when querying the database." })
-            }
-            return res.status(200).send({ "status": 200, "response": row })
-        })
-    }
-});
-
-app.delete('/delete/:id', (req, res) => {
-    const header = req.get('secret');
-    if(header === `${process.env.secret}`) {
-        const filepath = `${__dirname}/uploads/${req.params.id}`
-
-        if (fs.existsSync(filepath)) {
-            fs.unlink(filepath, (err) => {
-                if(err) {
-                    return res.status(500).send({ "status": 500, "error": err.message, "message": "Sorry, something went wrong when trying to delete that screenshot"})
-                } else {
-                    db.run(`DELETE FROM screenshots WHERE title='${req.params.id}'`)
-                    return res.send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
-                }
-            })
+    app.get('/view', async (req, res) => {
+        if(req.query.photo) {
+                const scd = db.get(`SELECT * FROM screenshots WHERE title='${req.query.photo}'`, (error, row) => {
+                    if(error) {
+                        console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+                        return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})
+                    }
+    
+                    if(!row) {
+                        return res.redirect(`/notfound.html?filename=${req.query.photo}`)
+                    }
+    
+                    var filePath = `${__dirname + '/frontend/' + 'viewer.html'}`
             
-        } else if (!fs.existsSync(filepath)) {
-            return res.status(404).send({ "status": 404, "message": `Sorry, ${req.params.id} wasn't found on the server.`})
+                    // read in the index.html file
+                    fs.readFile(filePath, 'utf8', async function (err,data) {
+                      if (err) {
+                        console.log(err);
+                        return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for viewer.html. I've provided the filepath to this file, make sure it exists!`})
+                      }
+                      
+                      // Dynamic meta tags, has to be server-side since crawlers don't generally run javascript
+                      if (process.env.dadjoke === 'true') {
+                          const dadjoke = await axios.get(`https://icanhazdadjoke.com`, {
+                              method: 'GET',
+                              headers: { 'Accept': 'application/json', 'user-agent': 'Awex - ShareX-Express (https://github.com/awexxx/sharex-express), hello!' }
+                          })
+                        
+                          data = data.replace(/\$OG_TITLE/g, `${dadjoke.data.joke}`);
+                      } else {
+                        data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
+                      }
+    
+                      data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
+                      data = data.replace(/\$OG_URL/g, `${row.url}`)
+                      data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
+                      data = data.replace(/\$OG_COLOR/g, `${process.env.color}`)
+                      result = data.replace(/\$OG_IMAGE/g, `${row.directurl}`);
+                      res.send(result);
+                    });
+                })
+        } else {
+            return res.status(404).send({ "status": 404, "message": "You need to provide a photo to search." })
         }
+    })
 
-    } else {
-        headerError = null;
-        if(!header) {
-            headerError = `no-header-provided`
-        } else if (header !== `${process.env.secret}`) {
-            headerError = `incorrect-header`
+    app.delete(`/delete/:id`, async (req, res) => {
+            const header = req.get('secret');
+        if(header === `${process.env.secret}`) {
+            const filepath = `${__dirname}/frontend/uploads/${req.params.id}`
+
+            if (fs.existsSync(filepath)) {
+                fs.unlink(filepath, (err) => {
+                    if(err) {
+                        return res.status(500).send({ "status": 500, "error": err.message, "message": "Sorry, something went wrong when trying to delete that screenshot"})
+                    } else {
+                        db.run(`DELETE FROM screenshots WHERE title='${req.params.id}'`)
+                        return res.send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
+                    }
+                })
+                
+            } else if (!fs.existsSync(filepath)) {
+                return res.status(404).send({ "status": 404, "message": `Sorry, ${req.params.id} wasn't found on the server.`})
+            }
+
+        } else {
+            return res.status(401).send({ "status": 401, "error": "Make sure you supplied an authorization error OR it's the correct one!" })
         }
+    })
 
-        return res.status(401).send({ "status": 401, "error": headerError })
-    }
-})
-
-// STRICTLY File sending endpoints
-app.get('/upload', (req, res) => {
-    res.download(__dirname + `/uploads/${req.query.view}`)
-})
-
-checkEnv();
-
-async function checkEnv() { 
     if (!fs.existsSync(__dirname + `/.env`)) {
         console.log(chalk.redBright.bold(`.env doesn't exist in ${__dirname}! Create it using .env.sample!`))
         return process.exit(0)
     } else {
-        const httpServer = http.createServer(app)
-        httpServer.listen(process.env.port, () => {
+        app.listen(process.env.port, () => {
         console.log(chalk.red`\n--------------------------`, chalk.green.bold(`\nAwex's ShareX Express Script -- Welcome!
         \nNeed help? Let me know on the issues page!
         \nTo get started, read the readme and POST an image via ShareX!
-        \nYour Settings: Protocol: ${protocol}, Domain: ${domain}
-        \nScript now running on`, chalk.red(`${protocol}://${domain}:${process.env.port}/`, '\n--------------------------\n')));
+        \nYour Settings: Domain: ${process.env.domain}, Port: ${process.env.port}
+        \nScript now running on`, chalk.red(`${process.env.domain}/`, '\n--------------------------\n')));
         }); 
     }
-}

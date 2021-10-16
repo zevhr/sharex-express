@@ -24,7 +24,7 @@
   <h3>Hey, where did you come from?</h3>
     <p>The file you're looking for (<span id="filename"></span>) doesn't exist on your server! <strong>Did you upload it right?</strong><br>
     If you believe this is an error, feel free to <a href="https://github.com/awexxx/sharex-express/issues" target="_blank">open an issue.</a><br><br>
-        <button type="button" onclick="history.back()">Retry?</button>
+        <a id="link" href="">Retry?</a>
 
   <script>
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -32,4 +32,5 @@
 
     var filename = params.filename
     document.querySelector('#filename').innerText = filename
+    document.querySelector('#link').setAttribute('href', `/view?photo=${filename}`)
   </script>

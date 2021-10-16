@@ -1,4 +1,4 @@
 .env
 node_modules
 app/storage.db
-app/uploads
+app/frontend/uploads
