@@ -84,10 +84,15 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
 
             // Data stuff lul
             let est = Date().toLocaleString(`en-US`, { timeZone: `America/New_York` });
-            let imgurl = `${process.env.protocol}://${process.env.domain}/uploads/${screenshot.name.toLowerCase()}`
-            let url = `${process.env.protocol}://${process.env.domain}/view?photo=${screenshot.name.toLowerCase()}`;
+            let imgurl = `${process.env.domain}/uploads/${screenshot.name.toLowerCase()}`
+            let url = `${process.env.domain}/view?photo=${screenshot.name.toLowerCase()}`;
 
-            const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ('${est}','${screenshot.name.toLowerCase()}','${url}','${imgurl}')`, (error, row) => {
+            const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ($date,$title,$url,$directurl)`, {
+                $date: est,
+                $title: screenshot.name.toLowerCase(),
+                $url: url,
+                $directurl: imgurl
+            }, (error, row) => {
                 if (error) {
                     console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
                     return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, I couldn't insert ${screenshot.name} into the database.`})
@@ -100,7 +105,7 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
 
     app.get('/view', async (req, res) => {
         if(req.query.photo) {
-                const scd = db.get(`SELECT * FROM screenshots WHERE title='${req.query.photo}'`, (error, row) => {
+                const scd = db.get(`SELECT * FROM screenshots WHERE title=?`, req.query.photo, (error, row) => {
                     if(error) {
                         console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
                         return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})
@@ -154,7 +159,7 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
                     if(err) {
                         return res.status(500).send({ "status": 500, "error": err.message, "message": "Sorry, something went wrong when trying to delete that screenshot"})
                     } else {
-                        db.run(`DELETE FROM screenshots WHERE title='${req.params.id}'`)
+                        db.run(`DELETE FROM screenshots WHERE title='?'`, req.params.id)
                         return res.send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
                     }
                 })

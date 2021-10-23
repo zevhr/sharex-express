@@ -1,8 +1,4 @@
-10/14/21
+10/23/21
 
-- Added actual error page
-- redid the viewer
-- removed the json api. meta tags are generated server-side so it was pointeless lmao
-- removed the profile
-- moved uploads to frontend so it can use the static route & not a predefined one (no more ?photo, all params)
-- added /settings endpoint
+- Fixed SQL Injection vulnerability
+- Added Dark Mode (needs some refinement with the viewer, but overall decent)

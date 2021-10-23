@@ -24,10 +24,18 @@ async function deleteSS() {
           })
 }
     
-    function showForm() {
-        var form = document.getElementById("form")
-        form.style.display = "block";
+function showForm() {
+    var form = document.getElementById("form")
+    form.style.display = "block";
     
-        var button = document.getElementById("del")
-        button.style.display = "none";
-    }
+    var button = document.getElementById("del")
+    button.style.display = "none";
+}
+
+function darkMode() {
+    document.getElementById('body').style.backgroundColor = `#121212`
+    document.querySelector('.jumbotron').style.backgroundColor = `#4a4a4a`
+    document.getElementById('date').style.color = `#919191`
+    document.getElementById('fork').style.color = `#919191`
+    document.querySelector('.header').style.backgroundColor = `#919191`
+}
