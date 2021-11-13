@@ -4,8 +4,6 @@
   "description": "A simple Express app to upload/POST ShareX screenshots to a domain",
   "main": "app/app.js",
   "dependencies": {
-    "axios": "^0.23.0",
-    "body-parser": "^1.19.0",
     "chalk": "^4.1.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",

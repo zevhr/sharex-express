@@ -31,7 +31,6 @@ app.use(fileUpload({
 
 // Database creation for the cool data storage stuff ;p
 var db = new sqlite3.Database(__dirname + '/storage.db');
-    if(!fs.existsSync(__dirname + '/storage.db')) {
         db.run(`CREATE TABLE IF NOT EXISTS "screenshots" (
             "title"	TEXT UNIQUE,
             "date"	TEXT,
@@ -39,12 +38,10 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
             "url"	TEXT UNIQUE
         );`, (error, row) => {
             if(error) {
-                console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
-                return;
+                console.log(`An error occurred in database creation! If this happens again, create an issue on GitHub.\n`, error)
+                process.exit();
             }
-            console.log('DB successfully created (this only happens on first launch or if the db gets deleted).')
         })
-    }
 
     var settings = { 
         "appname": `${process.env.appname}`,
