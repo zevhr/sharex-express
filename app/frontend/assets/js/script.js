@@ -2,7 +2,7 @@ async function deleteSS() {
         const params = new URLSearchParams(window.location.search)
         let title = params.get('photo')
         var secret = document.querySelector("#secret").value
-        const delfile = await fetch(`/delete/${title}`, {
+        await fetch(`/delete/${title}`, {
             method: "DELETE",
             headers: { "secret": `${secret}`}
         })
@@ -13,7 +13,7 @@ async function deleteSS() {
                 error.style.display = "none";
                 var success = document.getElementById("success");
                 success.style.display = "block";
-                window.location.reload();
+                location.reload();
             } else if (response.status === 403 || response.status === 404) {
                 var success = document.getElementById("success");
                 success.style.display = "none";
@@ -37,5 +37,5 @@ function darkMode() {
     document.querySelector('.jumbotron').style.backgroundColor = `#4a4a4a`
     document.getElementById('date').style.color = `#919191`
     document.getElementById('fork').style.color = `#919191`
-    document.querySelector('.header').style.backgroundColor = `#919191`
+    document.querySelector('.header').style.color = `#919191`
 }

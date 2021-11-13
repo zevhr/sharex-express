@@ -14,10 +14,12 @@ const chalk = require('chalk');
 const morgan = require('morgan');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
-const axios = require('axios').default;
 require('dotenv').config({ path: __dirname + '/.env' })
 
 const app = express();
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(express.static(__dirname + '/frontend'));
@@ -44,10 +46,21 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
         })
     }
 
+    var settings = { 
+        "appname": `${process.env.appname}`,
+        "domain": `${process.env.domain}`, 
+        "port": process.env.port, 
+        "redirectto": `${process.env.redirect}`, 
+        "customization": { 
+            "embedColor": `${process.env.color}`,
+            "description": `${process.env.description}`
+            }
+        } 
+
     // Endpoints
     app.get('/', (req, res) => {
         if (process.env.redirect === 'no_redirect' || !process.env.redirect) {
-            return res.send({ "status": 200, "app-name": `${appname}` })
+            return res.send({ "status": 200, "app-name": `${process.env.appname}` })
         } else {
             return res.redirect(process.env.redirect)
         }
@@ -55,16 +68,7 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
 
     app.get('/settings', (req, res) => {
         res.send({ "status": 200, 
-        "settings": { 
-            "appname": `${process.env.appname}`,
-            "domain": `${process.env.domain}`, 
-            "port": process.env.port, 
-            "redirectto": `${process.env.redirect}`, 
-            "customization": { 
-                "embedColor": `${process.env.color}`,
-                "dadjoke": process.env.dadjoke
-                }
-            } 
+                    settings 
         })
     })
 
@@ -82,12 +86,12 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
             let screenshot = req.files.sharex
             screenshot.mv(__dirname + '/frontend/uploads/' + screenshot.name.toLowerCase());
 
-            // Data stuff lul
+            // Data stuff lul (also tz in new york because new york SUPERIOR)
             let est = Date().toLocaleString(`en-US`, { timeZone: `America/New_York` });
             let imgurl = `${process.env.domain}/uploads/${screenshot.name.toLowerCase()}`
             let url = `${process.env.domain}/view?photo=${screenshot.name.toLowerCase()}`;
 
-            const insert = db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ($date,$title,$url,$directurl)`, {
+            db.run(`INSERT INTO screenshots (date, title, url, directurl) VALUES ($date,$title,$url,$directurl)`, {
                 $date: est,
                 $title: screenshot.name.toLowerCase(),
                 $url: url,
@@ -112,37 +116,10 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
                     }
     
                     if(!row) {
-                        return res.redirect(`/notfound.html?filename=${req.query.photo}`)
+                        return res.render('notfound', { settings, "filename": req.query.photo });
                     }
     
-                    var filePath = `${__dirname + '/frontend/' + 'viewer.html'}`
-            
-                    // read in the index.html file
-                    fs.readFile(filePath, 'utf8', async function (err,data) {
-                      if (err) {
-                        console.log(err);
-                        return res.status(500).send({ "status": 500, "filepath": filePath, "error": err.message, "message": `Sorry, something went wrong when trying to look for viewer.html. I've provided the filepath to this file, make sure it exists!`})
-                      }
-                      
-                      // Dynamic meta tags, has to be server-side since crawlers don't generally run javascript
-                      if (process.env.dadjoke === 'true') {
-                          const dadjoke = await axios.get(`https://icanhazdadjoke.com`, {
-                              method: 'GET',
-                              headers: { 'Accept': 'application/json', 'user-agent': 'Awex - ShareX-Express (https://github.com/awexxx/sharex-express), hello!' }
-                          })
-                        
-                          data = data.replace(/\$OG_TITLE/g, `${dadjoke.data.joke}`);
-                      } else {
-                        data = data.replace(/\$OG_TITLE/g, `Screenshot from ${row.date}`);
-                      }
-    
-                      data = data.replace(/\$OG_DATE/g, `Screenshot taken on ${row.date}`)
-                      data = data.replace(/\$OG_URL/g, `${row.url}`)
-                      data = data.replace(/\$OG_SITENAME/g, `${row.title} >> ${process.env.appname}`)
-                      data = data.replace(/\$OG_COLOR/g, `${process.env.color}`)
-                      result = data.replace(/\$OG_IMAGE/g, `${row.directurl}`);
-                      res.send(result);
-                    });
+                    return res.render('viewer', { settings, row })
                 })
         } else {
             return res.status(404).send({ "status": 404, "message": "You need to provide a photo to search." })
@@ -159,7 +136,7 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
                     if(err) {
                         return res.status(500).send({ "status": 500, "error": err.message, "message": "Sorry, something went wrong when trying to delete that screenshot"})
                     } else {
-                        db.run(`DELETE FROM screenshots WHERE title='?'`, req.params.id)
+                        db.run(`DELETE FROM screenshots WHERE title=?`, req.params.id)
                         return res.send({ "status": 200, "message": `${req.params.id} was successfully deleted.`})
                     }
                 })
@@ -171,6 +148,10 @@ var db = new sqlite3.Database(__dirname + '/storage.db');
         } else {
             return res.status(401).send({ "status": 401, "error": "Make sure you supplied an authorization error OR it's the correct one!" })
         }
+    })
+
+    app.use(function(req, res, next) {
+        return res.status(404).render('notfound', { "path": req.originalUrl, "filename": null })
     })
 
     if (!fs.existsSync(__dirname + `/.env`)) {

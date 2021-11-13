@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Photo Not Found</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=0.1">
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/header.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <!-- ----- Meta Tags // Embed ----- -->
+
+    <!-- Classic Discord Embed -->
+    <meta property="og:site_name" content="<%= settings.appname %>" />
+    <meta property="og:title" content="Photo not found!" />
+    <meta content="<%= settings.color %>" name="theme-color" data-react-helmet="true" />
+    <meta content="og:description" content="<%= settings.description %>" />
+</head>
+
+<%- include('partials/header') %>
+
+  <div class="container">
+    <div class="jumbotron">
+        <h3 style="color:#8c8c8c">Hey, where did you come from?</h3>
+        <p style="color:#b8b8b8">The file/path you're looking for (<%= filename || path %>) doesn't exist on this server! <strong>Did you upload it right?</strong><br>
+        If you believe this is an error, feel free to <a href="https://github.com/awexxx/sharex-express/issues" target="_blank">open an issue.</a><br><br>
+            <a href="#" onclick="location.reload()">Retry?</a>
+    </div>
+    <h3 id="fork"><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express" target="_blank">GitHub!</a></i></h3>
+</div>
