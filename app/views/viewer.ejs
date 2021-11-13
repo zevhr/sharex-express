@@ -10,10 +10,10 @@
 
     <!-- Classic Discord Embed -->
     <meta property="og:site_name" content="<%= settings.appname %>" />
-    <meta property="og:description" content="<%= settings.description %>" />
+    <meta property="og:description" content="<%= settings.customization.description %>" />
     <meta content="<%= row.title %>" property="og:title">
     <meta content="<%= row.url %>" property="og:url">
-    <meta content="<%= settings.color %>" name="theme-color" data-react-helmet="true">
+    <meta content="<%= settings.customization.embedColor %>" name="theme-color" data-react-helmet="true">
     <meta property="og:image" content="<%= row.directurl %>">
     <meta property="twitter:card" content="summary_large_image">
 </head>
