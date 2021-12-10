@@ -1,12 +1,6 @@
-11/13/21
+12/10/21
 
-- Moved entirely to views (ejs). Easier lmao
-- Removed oEmbed JSON. Don't need it, really
-- Readded .env.sample (seriously, why does this keep disappearing?)
-- Revamped readme
-- Fixed "column out of range" issue in delete route (those damn apostraphes, why were they even there?) 
-- Fully nuked packages that weern't even being used
-- Fixed issue (shouldn't have been there in the first place) where if the app crashed before the database successfully created the table, the command wouldn't be reran on next start.
-- Removal of dadjoke. I don't want to spam their API with requests lmao
-- Addition of description field in env (embeds).
-- Changed a few things around in the embed.
+- Overhauled post system
+- Made some modifications to viewer
+- Added support for jpg, png, json and txt viewing
+- Cleaned up a bit

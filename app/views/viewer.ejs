@@ -2,9 +2,9 @@
 <head>
     <title><%= row.title %></title>
     <meta name="viewport" content="width=device-width,minimum-scale=0.1">
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/assets/css/header.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" href="/css/main.css">
     
     <!-- ----- Meta Tags // Embed ----- -->
 
@@ -21,23 +21,39 @@
 
 <%- include('partials/header'); %>
 
-  <div class="container">
-    <div id="date" style="text-align:center;"><h3><%= row.date %></h3></div>
-    <div class="jumbotron" id="photo">
-        <div id="jumbo-internal" style="text-align:center;"><img src="<%= row.directurl %>"></div>
+<% if (type === 'text') { %>
+    <div class="container">
+        <div id="date" style="text-align:center;"><h3><%= row.date %></h3></div>
+        <div class="jumbotron" id="photo">
+            <div id="jumbo-internal" style="text-align:center; color:white;"><%= data %></div>
+        </div>
+        <h3 id="fork"><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express" target="_blank">GitHub!</a></i></h3>
+        <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button>
+        <div style="display:none;" id="form">
+            <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br>
+            <div id="success" style="display:none;"><p>Success!</p></div>
+            <div id="err" style="display:none;"><p>Failed to issue DELETE request<br>Response code: <span id="code"></span></span><br>Double check your token.</p></div>
+            <button type="button" onclick="deleteSS()">Submit</button>
+        </div>
     </div>
-    <h3 id="fork"><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express" target="_blank">GitHub!</a></i></h3>
-    <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button>
-    <div style="display:none;" id="form">
-        <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br>
-        <div id="success" style="display:none;"><p>Success!</p></div>
-        <div id="err" style="display:none;"><p>Failed to issue DELETE request<br>Response code: <span id="code"></span></span><br>Double check your token.</p></div>
-        <button type="button" onclick="deleteSS()">Submit</button>
+<% } else if (type === 'img') { %>
+    <div class="container">
+        <div id="date" style="text-align:center;"><h3><%= row.date %></h3></div>
+        <div class="jumbotron" id="photo">
+            <div id="jumbo-internal" style="text-align:center;"><img src="<%= row.directurl %>"></div>
+        </div>
+        <h3 id="fork"><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express" target="_blank">GitHub!</a></i></h3>
+        <button id="del" type="button" onclick="showForm()">Delete this screenshot?</button>
+        <div style="display:none;" id="form">
+            <input style="font-size:20px; width:330px;" type="text" id="secret" name="secret" placeholder="Secret.."><br>
+            <div id="success" style="display:none;"><p>Success!</p></div>
+            <div id="err" style="display:none;"><p>Failed to issue DELETE request<br>Response code: <span id="code"></span></span><br>Double check your token.</p></div>
+            <button type="button" onclick="deleteSS()">Submit</button>
+        </div>
     </div>
-</div>
-
+<% } %>
 </body>
 
-<script src="/assets/js/script.js"></script>
+<script src="/js/script.js"></script>
 
 </html>
