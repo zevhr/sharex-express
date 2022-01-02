@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = () => {
     var db = new sqlite3.Database(`${__dirname}/../storage.db`);
         db.run(`CREATE TABLE IF NOT EXISTS "files" (
-            "title"	TEXT UNIQUE,
+            "title"	TEXT,
             "date"	TEXT,
             "directurl"	TEXT UNIQUE,
             "url"	TEXT UNIQUE,

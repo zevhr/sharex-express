@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
     <!-- ----- Meta Tags // Embed ----- -->
 
@@ -23,7 +24,9 @@
 
 <% if (type === 'text') { %>
     <div class="container">
-        <div id="date" style="text-align:center;"><h3><%= row.date %></h3></div>
+        <div id="date" style="text-align:center;"><h3><%= row.date %></h3><h3><%= row.title %></h3>        
+        <a style="color:black;" href="#" onclick="openModal()"><i style="font-size:20px;" class="fa fa-pencil" aria-hidden="true"></i></a></h3>
+        </div>
         <div class="jumbotron" id="photo">
             <div id="jumbo-internal" style="text-align:center; color:white;"><%= data %></div>
         </div>
@@ -38,7 +41,9 @@
     </div>
 <% } else if (type === 'img') { %>
     <div class="container">
-        <div id="date" style="text-align:center;"><h3><%= row.date %></h3></div>
+        <div id="date" style="text-align:center; display:inline-block"><h3><%= row.date %></h3><h3><%= row.title %> 
+        <a style="color:black;" href="#" onclick="openModal()"><i style="font-size:20px;" class="fa fa-pencil" aria-hidden="true"></i></a></h3>
+        </div>
         <div class="jumbotron" id="photo">
             <div id="jumbo-internal" style="text-align:center;"><img src="<%= row.directurl %>"></div>
         </div>
@@ -52,8 +57,42 @@
         </div>
     </div>
 <% } %>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span><br>
+
+    <div style="text-align:center;">
+      <input style="font-size:20px; width:330px;" type="text" id="title" name="title" placeholder="New title.." required><br>
+      <input style="font-size:20px; width:330px;" type="text" id="titleSecret" name="titleSecret" placeholder="Secret.." required><br>
+      <button type="button" onclick="changeTitle('<%= row.title %>')">Submit</button><br>
+
+      <div id="noti"></div>
+    </div>
+    </div>
+  
+  </div>
+
 </body>
 
 <script src="/js/script.js"></script>
+<script>
+async function openModal() {
+var modal = document.getElementById("modal");
+var btn = document.querySelector('fa fa-pencil')
+var span = document.getElementsByClassName("close")[0];
+modal.style.display = "block";
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+}
+</script>
 
 </html>

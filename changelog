@@ -1,6 +1,7 @@
-12/10/21
+01/02/22
 
-- Overhauled post system
-- Made some modifications to viewer
-- Added support for jpg, png, json and txt viewing
-- Cleaned up a bit
+- happy new year!
+- added profile page back - a lot faster this time.
+- added api routes (again, a lot better this time)
+- added ez verify function file
+- slight changes to the viewer & js

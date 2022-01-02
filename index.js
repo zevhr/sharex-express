@@ -14,6 +14,7 @@ const path = require('path');
 const chalk = require('chalk');
 const morgan = require('morgan');
 const cors = require('cors');
+const axios = require('axios');
 const sql3 = require('sqlite3');
 require('dotenv').config();
 
@@ -46,6 +47,9 @@ const db = new sql3.Database(`${__dirname}/app/storage.db`);
 
 // Routes
 
+const api = require('./app/utils/api');
+app.use('/api/', api)
+
 app.get('/', (req, res) => {
     if(process.env.redirect === 'no_redirect') {
         return res.send({ "status": 200, "message": "ShareX-Express is running successfully!" })
@@ -76,7 +80,7 @@ app.post('/post', (req, res) => {
         }
 
         let file = req.files.sharex;
-        let est = Date().toLocaleString(`en-US`, { timeZone: `America/New_York` });
+        let est = Date().toLocaleString("en-US", { timeZone: "America/New_York" })
         let fileurl = `${process.env.domain}/uploads/${fileExtension}/${file.name.toLowerCase()}`
         let url = `${process.env.domain}/viewer?file=${file.name.toLowerCase()}`;
 
@@ -123,6 +127,18 @@ app.get('/viewer', (req, res) => {
         })
     } else {
         return res.status(404).send({ "status": 404, "message": "You need to provide a photo that exists on the server."})
+    }
+})
+
+app.get('/profile', async (req, res) => {
+    var { data } = await axios.get(`${process.env.domain}/api/metadata`, {
+        headers: { secret: process.env.secret }
+    })
+
+    if(!req.query.secret || !req.query.secret === process.env.secret) {
+        return res.status(401).send({ 'status': 401 });
+    } else {
+        return res.render('profile', { settings, query: req.query, data })
     }
 })
 
