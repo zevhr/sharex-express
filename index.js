@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 })
 
 // Posting handler
-var allowed_extensions = new Set([ "png", "jpg", "txt", "json" ])
+var allowed_extensions = new Set([ "png", "jpg", "txt", "json", "gif" ])
 app.post('/post', (req, res) => {
     const header = req.get('secret');
     var fileExtension = path.extname(req.files.sharex.name).replace('.', '');

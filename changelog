@@ -5,3 +5,4 @@
 - added api routes (again, a lot better this time)
 - added ez verify function file
 - slight changes to the viewer & js
+- added gifs into the whitelisted file extensions
