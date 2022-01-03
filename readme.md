@@ -27,8 +27,8 @@ Right next to that, in the `File form name` field, put `sharex`.
 That's pretty much it. If you click `Test` next to the `Image Uploader` dropdown, it should give you 200 OK and a URL to view the photo on.  
 
 ### Coming Soon
-- Support for file uploading, text viewing/uploading & link shortening (p much all of ShareX's functions)
-- Hopefully a better way to do some cleaning and delete screenshots that you do not have the link for   
+- ~~Support for file uploading, text viewing/uploading~~ & link shortening (p much all of ShareX's functions)
+- ~~Hopefully a better way to do some cleaning and delete screenshots that you do not have the link for~~ Now added in the /profile endpoint (requires secret as query param).
 
 # Errors
 `The uploads directory doesn't exist!` - What it says, make sure the uploads directory exists in app/static!  
