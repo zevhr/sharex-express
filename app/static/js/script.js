@@ -1,43 +1,27 @@
-async function deleteSS() {
-    const params = new URLSearchParams(window.location.search)
-    let title = params.get('file')
-    var secret = document.querySelector("#secret").value
+async function deleteSS(title, secret) {
+
     await fetch(`/api/delete/${title}`, {
-        method: "DELETE",
-        headers: { "secret": `${secret}`}
-    })
-    .then(function(response) {
-        // console.log(response.status); // Will show you the status
-        if(response.status === 200) {
-            var error = document.getElementById("err");
-            error.style.display = "none";
-            var success = document.getElementById("success");
-            success.style.display = "block";
+        method: 'DELETE',
+        headers: { 'ShareX-Secret': secret }
+    }).then(function(response) {
+        if (response.status === 200) {
+            console.log(`${title} successfully deleted.`)
             location.reload();
-        } else if (response.status === 403 || response.status === 404) {
-            var success = document.getElementById("success");
-            success.style.display = "none";
-            var error = document.getElementById("err");
-            error.style.display = "block";
-            var code = document.getElementById("code").innerHTML = response.status
+        } else if (response.status === 401) {
+            document.getElementById('err').innerHTML = `<p style="color:black;"><br>Sorry, your token is incorrect.</p>`
         }
-      })
+    }).catch(function(err) {
+        console.error(`Something went wrong!`, err)
+        document.getElementById(`err`).innerHTML = `<p style="color:black;">Sorry, something went wrong when deleting ${title}.`
+    })
 }
 
 function showForm() {
-var form = document.getElementById("form")
-form.style.display = "block";
+    var form = document.getElementById("form")
+    form.style.display = "block";
 
-var button = document.getElementById("del")
-button.style.display = "none";
-}
-
-function darkMode() {
-document.getElementById('body').style.backgroundColor = `#121212`
-document.querySelector('.jumbotron').style.backgroundColor = `#4a4a4a`
-document.getElementById('date').style.color = `#919191`
-document.getElementById('fork').style.color = `#919191`
-document.querySelector('.header').style.color = `#919191`
+    var button = document.getElementById("del")
+    button.style.display = "none";
 }
 
 async function changeTitle(fromTitle) {
@@ -53,7 +37,7 @@ async function changeTitle(fromTitle) {
     } else {
         fetch(`/api/metadata/${fromTitle}?title=${newTitle}`, {
             method: 'PATCH',
-            headers: { 'secret': secret }
+            headers: { 'ShareX-Secret': secret }
         }).then(function(response) {
             if(response.status === 200) {
                 errDiv.innerHTML = '<p>Success!</p>'

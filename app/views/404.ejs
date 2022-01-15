@@ -1,28 +1,25 @@
 <html>
-<head>
-    <title>File Not Found</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=0.1">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <head>
+        <title>Not Found</title>
+        <meta name="viewport" content="width=device-width,minimum-scale=0.1">
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/css/header.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
+        <!-- ----- Meta Tags // Embed ----- -->
     
-    <!-- ----- Meta Tags // Embed ----- -->
+        <!-- Classic Discord Embed -->
+        <meta property="og:site_name" content="<%= settings.appname %>" />
+        <meta property="og:title" content="Photo not found!" />
+        <meta name="theme-color" data-react-helmet="true" content="<%= settings.customization.embedColor %>" />
+        <meta property="og:footer" content="Made with ShareX-Express" />
+    </head>
 
-    <!-- Classic Discord Embed -->
-    <meta property="og:site_name" content="<%= settings.appname %>" />
-    <meta property="og:title" content="Photo not found!" />
-    <meta name="theme-color" data-react-helmet="true" content="<%= settings.customization.embedColor %>" />
-    <meta property="og:description" content="<%= settings.customization.description %>" />
-</head>
-
-<%- include('partials/header') %>
-
-  <div class="container">
-    <div class="jumbotron">
-        <h3 style="color:#8c8c8c">Hey, where did you come from?</h3>
-        <p style="color:#b8b8b8">The file/path you're looking for (<%= filename || path %>) doesn't exist on this server! <strong>Did you upload it right?</strong><br>
-        If you believe this is an error, feel free to <a href="https://github.com/awexxx/sharex-express/issues" target="_blank">open an issue.</a><br><br>
-            <a href="#" onclick="location.reload()">Retry?</a>
+    <div class="container">
+        <h1 class="typewriter">not found</h3>
+            <p class="typewriter-2">click <a href="javascript:location.reload()">here</a> to retry.</p>
     </div>
-    <h3 id="fork"><i>Star/fork this project on <a href="https://github.com/awexxx/sharex-express" target="_blank">GitHub!</a></i></h3>
-</div>
+
+    <p style="color:white; position:absolute; bottom:0; width:100%; left:0;"><a href="/profile">Profile</a> | <a href="https://github.com/awexthedev/sharex-express" target="_blank">GitHub</a></p>
+</html>

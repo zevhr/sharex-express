@@ -1,8 +1,8 @@
-01/02/22
+01/15/22
 
-- happy new year!
-- added profile page back - a lot faster this time.
-- added api routes (again, a lot better this time)
-- added ez verify function file
-- slight changes to the viewer & js
-- added gifs into the whitelisted file extensions
+- Redid frontend layout, a lot more minimal.
+- Redid some frontend scripts that were messy.
+- Changed required header from "secret" to "ShareX-Secret"
+- Removed description field from oembed tags, replaced with footer
+- Fixed issue where the app would crash when a file was deleted but it's entry wasn't.
+- Added wiki for documentation

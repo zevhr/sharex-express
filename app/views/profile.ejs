@@ -1,85 +1,105 @@
 <html>
-<head>
-    <title>Profile</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=0.1">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <head>
+        <title>Profile</title>
+        <meta name="viewport" content="width=device-width,minimum-scale=0.1">
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/css/header.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
+        <!-- ----- Meta Tags // Embed ----- -->
     
-    <!-- ----- Meta Tags // Embed ----- -->
+        <!-- Classic Discord Embed -->
+        <meta property="og:site_name" content="<%= settings.appname %> - Profile" />
+        <meta property="og:footer" content="Made with ShareX-Express" />
+        <meta content="<%= settings.customization.embedColor %>" name="theme-color" data-react-helmet="true">
+    </head>
+    <body>
 
-    <!-- Classic Discord Embed -->
-    <meta property="og:site_name" content="<%= settings.appname %>" />
-    <meta property="og:description" content="<%= settings.appname %>'s Profile Page" />
-    <meta content="/profile" property="og:url">
-    <meta content="<%= settings.customization.embedColor %>" name="theme-color" data-react-helmet="true">
-    <meta property="twitter:card" content="summary_large_image">
-</head>
-<body id="body">
+        <div class="container">
+            <div id="list"></div>
+            <a style="color:white;" href="javascript:back()" id="back"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+            <a style="color:white;" href="javascript:next()" id="next"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
 
-<%- include('partials/header'); %>
-
-<div id="list"></div>
-<a style="color:black;" href="javascript:back()" id="back"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
-<a style="color:black;" href="javascript:next()" id="next"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
-
-<script>
-    var current_page = 1;
-    var records_per_page = 3;
-
-    var objJson = JSON.parse('<%- JSON.stringify(data.data) %>')
-
-    function back() {
-        if (current_page > 1) {
-            current_page--;
-            changePage(current_page);
-        }
-    }
-
-    function next() {
-        if (current_page < numPages()) {
-            current_page++;
-            changePage(current_page);
-        }
-    }
-
-    function changePage(page) {
-        var btn_next = document.getElementById("next");
-        var btn_prev = document.getElementById("back");
-        var listing_table = document.getElementById("list");
-        var page_span = document.getElementById("page");
-
-        if (objJson.length === 0) document.getElementById('list').innerHTML = `<h3>No files found in database!</h3>`
-        else listing_table.innerHTML = ""
-
-        // Validate page
-        if (page < 1) page = 1;
-        if (page > numPages()) page = numPages();
-
-        for (var i = (page-1) * records_per_page; i < (page * records_per_page); i++) {
-            listing_table.innerHTML += `<a style="color:white;" href="${objJson[i].url}" target="_blank">${objJson[i].title}</a> - Taken on <strong>${objJson[i].date}</strong>` + "<br>";
-        }
-        page_span.innerHTML = page;
-
-            if (page == 1) {
-                btn_prev.style.visibility = "hidden";
-            } else {
-                btn_prev.style.visibility = "visible";
-            }
-
-            if (page == numPages()) {
-                btn_next.style.visibility = "hidden";
-            } else {
-                btn_next.style.visibility = "visible";
-            }
-        }
-
-    function numPages() {
-        return Math.ceil(objJson.length / records_per_page);
-    }
-
-    window.onload = function() {
-        changePage(1);
-    };
-</script>
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                  <span class="close">&times;</span><br>
+            
+                <div style="text-align:center;">
+                  <h3>Are you sure you want to delete <span id="delLink"></span>?</h3><br>
+                  <p style="color:red">Note: this action is unreversable!</p>
+                  <button type="button" onclick="deleteSS(document.getElementById('delLink').innerText, `<%= query.secret %>`)">Submit</button><br>
+            
+                  <div id="err"></div>
+                </div>
+                </div>
+              
+              </div>
+            
+            <script src="/js/script.js"></script>
+            <script src="/js/popModal.js"></script>
+            <script>
+                var current_page = 1;
+                var records_per_page = 3;
+            
+                objJson = JSON.parse('<%- JSON.stringify(data.data) %>')
+            
+                function back() {
+                    if (current_page > 1) {
+                        current_page--;
+                        changePage(current_page);
+                    }
+                }
+            
+                function next() {
+                    if (current_page < numPages()) {
+                        current_page++;
+                        changePage(current_page);
+                    }
+                }
+            
+                function changePage(page) {
+                    var btn_next = document.getElementById("next");
+                    var btn_prev = document.getElementById("back");
+                    var listing_table = document.getElementById("list");
+                    var page_span = document.getElementById("page");
+            
+                    if (objJson.length === 0) document.getElementById('list').innerHTML = `<h3>No files found in database! <a href="javascript:location.reload()">Retry?</a></h3>`
+                    else listing_table.innerHTML = ""
+            
+                    // Validate page
+                    if (page < 1) page = 1;
+                    if (page > numPages()) page = numPages();
+            
+                    for (var i = (page-1) * records_per_page; i < (page * records_per_page); i++) {
+                        listing_table.innerHTML += `<a style="color:white;" href="${objJson[i].url}" target="_blank">${objJson[i].title}</a> - 
+                        Taken on <strong>${objJson[i].date}</strong> <a id="${i}" onclick="openDeleteModal(this.id)"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        ` + "<br>";
+                    }
+            
+                    page_span.innerHTML = page;
+            
+                        if (page == 1) {
+                            btn_prev.style.visibility = "hidden";
+                        } else {
+                            btn_prev.style.visibility = "visible";
+                        }
+            
+                        if (page == numPages()) {
+                            btn_next.style.visibility = "hidden";
+                        } else {
+                            btn_next.style.visibility = "visible";
+                        }
+                    }
+            
+                function numPages() {
+                    return Math.ceil(objJson.length / records_per_page);
+                }
+            
+                window.onload = function() {
+                    changePage(1);
+                };
+            </script>
+        </div> 
+    </body>
+</html>

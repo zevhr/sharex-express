@@ -46,12 +46,11 @@ var settings = {
 const db = new sql3.Database(`${__dirname}/app/storage.db`);
 
 // Routes
-
 const api = require('./app/utils/api');
 app.use('/api/', api)
 
 app.get('/', (req, res) => {
-    if(process.env.redirect === 'no_redirect') {
+    if(process.env.redirect === 'no_redirect' || !process.env.redirect) {
         return res.send({ "status": 200, "message": "ShareX-Express is running successfully!" })
     } else {
         return res.redirect(process.env.redirect)
@@ -80,7 +79,14 @@ app.post('/post', (req, res) => {
         }
 
         let file = req.files.sharex;
-        let est = Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+
+        // Date Calculation
+        let dateob = new Date();
+        let date = ("0" + dateob.getDate()).slice(-2);
+        let month = ("0" + (dateob.getMonth() + 1)).slice(-2);
+        let est = month + '/' + date + '/' + dateob.getFullYear() + ' at ' + dateob.getHours() + ':' + dateob.getMinutes()
+
+
         let fileurl = `${process.env.domain}/uploads/${fileExtension}/${file.name.toLowerCase()}`
         let url = `${process.env.domain}/viewer?file=${file.name.toLowerCase()}`;
 
@@ -114,14 +120,21 @@ app.get('/viewer', (req, res) => {
                 return res.render('404', { settings, filename: req.query.file });
             } else {
                 const fileExtension = path.extname(req.query.file).replace('.', '');
-                if(fileExtension === 'txt') {
-                    var data = fs.readFileSync(path.resolve(__dirname, 'app', 'static', 'uploads', 'txt', req.query.file), 'utf8')
-                    return res.render('viewer', { settings, row, type: 'text', data: data})
-                } else if (fileExtension === 'png' || fileExtension === 'jpg') {
-                    return res.render('viewer', { settings, row, type: 'img' })
-                } else if (fileExtension === 'json') {
-                    var data = fs.readFileSync(path.resolve(__dirname, 'app', 'static', 'uploads', 'json', req.query.file), 'utf8')
-                    return res.status(200).send(data)
+                try {
+                    if(fileExtension === 'txt') {
+                        var data = fs.readFileSync(path.resolve(__dirname, 'app', 'static', 'uploads', 'txt', req.query.file), 'utf8')
+                        return res.render('viewer', { settings, row, type: 'text', data: data})
+                    } else if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'gif') {
+                        return res.render('viewer', { settings, row, type: 'img' })
+                    } else if (fileExtension === 'json') {
+                        var data = fs.readFileSync(path.resolve(__dirname, 'app', 'static', 'uploads', 'json', req.query.file), 'utf8', function(err) {
+                            console.log(err)
+                        })
+                        return res.status(200).send(data)
+                    }
+                } catch (err) {
+                    console.log(`An error occurred when loading ${req.query.file}.\n`, err.message)
+                    return res.render('404', { settings, filename: req.query.file });
                 }
             }
         })
@@ -132,10 +145,10 @@ app.get('/viewer', (req, res) => {
 
 app.get('/profile', async (req, res) => {
     var { data } = await axios.get(`${process.env.domain}/api/metadata`, {
-        headers: { secret: process.env.secret }
+        headers: { "ShareX-Secret": process.env.secret }
     })
 
-    if(!req.query.secret || !req.query.secret === process.env.secret) {
+    if(!req.query.secret || req.query.secret !== process.env.secret) {
         return res.status(401).send({ 'status': 401 });
     } else {
         return res.render('profile', { settings, query: req.query, data })

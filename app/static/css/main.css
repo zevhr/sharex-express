@@ -9,13 +9,22 @@
     height: 100px;
     border-radius: 3px;
   }
+
+  a {
+    color:white;
+    text-decoration:none;
+  }
+
+  a:hover {
+    color:white;
+  }
   
   .container {
       padding-top:140px;
   }
 
   .jumbotron {
-      background-color:#4a4a4a;
+      background-color:gray;
   }
   
   .jumbotron img {
@@ -27,7 +36,7 @@
   }
   
   body {
-    background-color:#b3b3b3;
+    background-color:black;
     text-align:center;
   }
 
@@ -72,7 +81,7 @@
   
   /* Modal Content/Box */
   .modal-content {
-    background-color: #fefefe;
+    background-color: gray;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
@@ -130,4 +139,51 @@
 @-o-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+.typewriter {
+  margin-top: 25px;
+  font-size: 60px;
+  text-align: center;
+
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+     -moz-animation: fadein 2s; /* Firefox < 16 */
+      -ms-animation: fadein 2s; /* Internet Explorer */
+       -o-animation: fadein 2s; /* Opera < 12.1 */
+          animation: fadein 2s;
+}
+
+.typewriter-2 {
+  margin-top: 25px;
+  font-size: 60px;
+  text-align: center;
+
+  -webkit-animation: fadein 4s; /* Safari, Chrome and Opera > 12.1 */
+     -moz-animation: fadein 4s; /* Firefox < 16 */
+      -ms-animation: fadein 4s; /* Internet Explorer */
+       -o-animation: fadein 4s; /* Opera < 12.1 */
+          animation: fadein 4s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
