@@ -22,7 +22,7 @@
     <div class="container">
         <div class="jumbotron">
             <% if (type === 'text') { %> <p style="color:white;"><%= data %></p> <% } %>
-            <% if (type === 'img') { %> <img src="<%= row.directurl %>"> <% } %>
+            <% if (type === 'img') { %> <img src="<%= settings.domain %>/uploads/<%= row.type %>/<%= row.title %>"> <% } %>
         </div>
         <h3 style="color:white;">Created on <%= row.date %></h3>
     </div>

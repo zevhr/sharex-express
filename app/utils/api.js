@@ -2,7 +2,7 @@ const express = require('express');
 const sql3 = require('sqlite3');
 const path = require('path');
 const fs = require('fs');
-const verifyToken = require('./verify')
+const verifyToken = require('./verify');
 const db = new sql3.Database(path.resolve(__dirname, '../', 'storage.db'));
 
 const router = express.Router();
@@ -29,7 +29,7 @@ router.get('/metadata/:file*?', verifyToken, (req, res) => {
             if (error) {
                 console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
                 return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})
-            } else return res.send({ data })
+            } else res.send(data);
         })
     } else {
         db.get(`SELECT * FROM files WHERE title=?`, req.params.file, (error, data) => {
@@ -69,10 +69,11 @@ router.patch(`/metadata/:file`, verifyToken, (req, res) => {
                 req.params.file,
                 fileExtension.replace('.', '')
             ], (error) => {
+                // If there is an error, check if the error message includes the word "UNIQUE"
                 if(error) {
                     if(error.message.includes(`UNIQUE`)) {
                         console.log(`${req.query.title + fileExtension} already exists on the server!`)
-                        // return res.status(500).send({ "status": 500, "message": "A file with the same name and file extension exists on the server."})
+                        return res.status(500).send({ "status": 500, "message": "A file with the same name and file extension exists on the server."})
                     } else {
                         console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
                         return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, something went wrong when querying the database.`})

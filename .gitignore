@@ -1,3 +1,4 @@
 .env
 storage.db
 node_modules
+app/static/uploads

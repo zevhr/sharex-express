@@ -16,6 +16,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const axios = require('axios');
 const sql3 = require('sqlite3');
+const uuid = require('uuid');
 require('dotenv').config();
 
 require('./app/utils/db')();
@@ -44,6 +45,9 @@ var settings = {
     } 
 
 const db = new sql3.Database(`${__dirname}/app/storage.db`);
+if (!fs.existsSync(path.resolve(__dirname + '/app/static/uploads'))) {
+    fs.mkdirSync(path.resolve(__dirname + '/app/static/uploads'));
+}
 
 // Routes
 const api = require('./app/utils/api');
@@ -61,42 +65,32 @@ app.get('/', (req, res) => {
 var allowed_extensions = new Set([ "png", "jpg", "txt", "json", "gif" ])
 app.post('/post', (req, res) => {
     const header = req.get('secret');
+    // if(req.files) var fileExtension = path.extname(req.files.sharex.name).replace('.', '');
+    if(!req.files) return res.status(400).json({ "status": 400, "message": "No content provided." });
     var fileExtension = path.extname(req.files.sharex.name).replace('.', '');
 
-    if(!header || header !== process.env.secret) {
-        return res.status(401).send({ "status": 401, "message": "Secret not provided or invalid"})
-    } else if(!allowed_extensions.has(fileExtension)) {
-        return res.status(400).send({ "status": 400, "message": `File type ${fileExtension} is not supported with ShareX-Express.`, "supported_extensions": allowed_extensions })
-    } else {
+    if(!header || header !== process.env.secret) return res.status(401).send({ "status": 401, "message": "Secret not provided or invalid"});
+    // if(!req.files && !req.body.url) return res.status(400).json({ "status": 400, "message": "No content provided." });
+    // if(!allowed_extensions.has(fileExtension) && req.files) return res.status(400).json({ "status": 400, "message": "File provided has an invalid file extension." });
+    if(!allowed_extensions.has(fileExtension)) return res.status(400).json({ "status": 400, "message": "File provided has an invalid file extension." });
 
-        // Ensure file was sent
-        if (!req.files) {
-            console.log(chalk.redBright.bold(`No files were uploaded with that!`))
-            return res.status(500).send({ "status": 500, "message": "No files were sent with your request." })
-        } else if (!fs.existsSync(path.resolve(__dirname, 'app', 'static', 'uploads'))) {
-            console.log(chalk.redBright.bold(`The uploads directory doesn't exist!`))
-            return res.status(500).send({ "status": 500, "message": "The uploads directory doesn't exist." })
-        }
-
+    // if(req.files) {
         let file = req.files.sharex;
 
         // Date Calculation
         let dateob = new Date();
         let date = ("0" + dateob.getDate()).slice(-2);
         let month = ("0" + (dateob.getMonth() + 1)).slice(-2);
+
         let est = month + '/' + date + '/' + dateob.getFullYear() + ' at ' + dateob.getHours() + ':' + dateob.getMinutes()
-
-
-        let fileurl = `${process.env.domain}/uploads/${fileExtension}/${file.name.toLowerCase()}`
         let url = `${process.env.domain}/viewer?file=${file.name.toLowerCase()}`;
 
         file.mv(path.resolve(__dirname, 'app', 'static', 'uploads', fileExtension + '/' + file.name.toLowerCase()));
 
-        db.run(`INSERT INTO files (date, title, url, directurl, type) VALUES ($date,$title,$url,$directurl,$type)`, {
+        db.run(`INSERT INTO files (date, title, url, type) VALUES ($date,$title,$url,$type)`, {
             $date: est,
             $title: file.name.toLowerCase(),
             $url: url,
-            $directurl: fileurl,
             $type: fileExtension
         }, (error, row) => {
             if (error) {
@@ -106,7 +100,32 @@ app.post('/post', (req, res) => {
                 return res.send(url)
             }
         })
-    }
+    // } else if (req.body.url) {
+    //     let url = req.body.url;
+    //     let id = uuid.v4();
+
+    //     // Date Calculation
+    //     let dateob = new Date();
+    //     let date = ("0" + dateob.getDate()).slice(-2);
+    //     let month = ("0" + (dateob.getMonth() + 1)).slice(-2);
+    //     let est = month + '/' + date + '/' + dateob.getFullYear() + ' at ' + dateob.getHours() + ':' + dateob.getMinutes()
+
+    //     let shortenedUrl = `${process.env.domain}/${id}`;
+
+    //     db.run(`INSERT INTO links (url, date, id, shortened) VALUES ($url,$date,$id,$shortened)`, {
+    //         $date: est,
+    //         $id: id,
+    //         $url: url,
+    //         $shortened: shortenedUrl
+    //     }, (error, row) => {
+    //         if (error) {
+    //             console.log(`An error occurred! If this happens again, create an issue on GitHub.\n`, error)
+    //             return res.status(500).send({ "status": 500, "error": error.message, "message": `Sorry, I couldn't insert that link into the database.`})
+    //         } else {
+    //             return res.send(url)
+    //         }
+    //     })
+    // }
 })
 
 // Viewer
@@ -143,7 +162,7 @@ app.get('/viewer', (req, res) => {
     }
 })
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', verifyToken, async (req, res) => {
     var { data } = await axios.get(`${process.env.domain}/api/metadata`, {
         headers: { "ShareX-Secret": process.env.secret }
     })
