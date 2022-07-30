@@ -1,8 +1,8 @@
 async function deleteSS(title, secret) {
 
     await fetch(`/api/delete/${title}`, {
-        method: 'DELETE',
-        headers: { 'ShareX-Secret': secret }
+        method: 'get',
+        headers: { 'secret': secret }
     }).then(function(response) {
         if (response.status === 200) {
             console.log(`${title} successfully deleted.`)
@@ -33,11 +33,11 @@ async function changeTitle(fromTitle) {
 
     if(!newTitle || !secret) {
         errDiv.innerHTML = '<p>No title or secret was provided!</p>'
-        errDiv.color = 'red'
+        errDiv.style.color = 'red'
     } else {
         fetch(`/api/metadata/${fromTitle}?title=${newTitle}`, {
             method: 'PATCH',
-            headers: { 'ShareX-Secret': secret }
+            headers: { 'secret': secret }
         }).then(function(response) {
             if(response.status === 200) {
                 errDiv.innerHTML = '<p>Success!</p>'

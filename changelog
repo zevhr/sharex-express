@@ -1,8 +1,12 @@
-01/15/22
+07/30/22
 
-- Redid frontend layout, a lot more minimal.
-- Redid some frontend scripts that were messy.
-- Changed required header from "secret" to "ShareX-Secret"
-- Removed description field from oembed tags, replaced with footer
-- Fixed issue where the app would crash when a file was deleted but it's entry wasn't.
-- Added wiki for documentation
+AaAaaaaaaand it's updated again. Finally, after 6 months
+This update comes with a LOT of improvements/changes. A lot has moved around and been cleaned up.
+
+- Reduced API from 90 lines to 44 lines
+- Swapped to mysql2 (requires database)
+- Rewrote the upload endpoint (60+ lines to only 20)
+- Only require query string with token for profile route
+- Dotenv is no more -- all json (not sorry)
+- It just works :)
+- Removed unused dependencies from project

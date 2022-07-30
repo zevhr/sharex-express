@@ -1,0 +1,19 @@
+{
+    "secret": "test",
+    "database": {
+        "user": "root",
+        "pass": "",
+        "host": "localhost",
+        "port": "3306",
+        "database": "test"
+    },
+    "frontend": {
+        "domain": "http://localhost:3000",
+        "name": "pogchamp",
+        "redirect": null,
+        "embedColor": "#00000"
+    },
+    "appc": {
+        "port": 3000
+    }
+}

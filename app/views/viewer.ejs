@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title><%= row.title %></title>
+        <title><%= data.title %></title>
         <meta name="viewport" content="width=device-width,minimum-scale=0.1">
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="/css/header.css">
@@ -10,24 +10,25 @@
         <!-- ----- Meta Tags // Embed ----- -->
     
         <!-- Classic Discord Embed -->
-        <meta property="og:site_name" content="<%= settings.appname %>" />
+        <meta property="og:site_name" content="<%= settings.name %>" />
         <meta property="og:footer" content="Made with ShareX-Express" />
-        <meta content="<%= row.title %>" property="og:title">
-        <meta content="<%= row.url %>" property="og:url">
-        <meta content="<%= settings.customization.embedColor %>" name="theme-color" data-react-helmet="true">
-        <meta property="og:image" content="<%= row.directurl %>">
+        <meta content="<%= data.title %>" property="og:title">
+        <meta content="<%= data.url %>" property="og:url">
+        <meta content="<%= settings.embedColor %>" name="theme-color" data-react-helmet="true">
+        <meta property="og:image" content="<%= data.directurl %>">
         <meta property="twitter:card" content="summary_large_image">
     </head>
 
     <div class="container">
         <div class="jumbotron">
-            <% if (type === 'text') { %> <p style="color:white;"><%= data %></p> <% } %>
-            <% if (type === 'img') { %> <img src="<%= settings.domain %>/uploads/<%= row.type %>/<%= row.title %>"> <% } %>
+            <% if (data.type == 'txt') { %> <p style="color:white;"><%= content %></p> <% } %>
+            <% if (data.type == 'png' || data.type == "jpg" || data.type == "gif") { %> <img src="<%= settings.domain %>/uploads/<%= data.type %>/<%= data.title %>"> <% } %>
         </div>
-        <h3 style="color:white;">Created on <%= row.date %></h3>
+        <h3 style="color:white;">Created on <%= data.date %></h3>
+        <p><a href="<%= settings.domain %>/uploads/<%= data.type %>/<%= data.title %>">Open full file?</a></p>
     </div>
 
-    <p style="color:white; position:absolute; bottom:0; width:100%; left:0;"><a href="/profile">Profile</a> | <%= row.title %> <a style="color:white;" href="#" onclick="openTitleModal()"><i style="font-size:15px;" class="fa fa-pencil" aria-hidden="true"></i></a> | <a href="https://github.com/awexthedev/sharex-express" target="_blank">GitHub</a></p>
+    <p style="color:white; position:absolute; bottom:0; width:100%; left:0;"><a href="/profile">Profile</a> | <%= data.title %> <a style="color:white;" href="#" onclick="openTitleModal()"><i style="font-size:15px;" class="fa fa-pencil" aria-hidden="true"></i></a> | <a href="https://github.com/zevhr/sharex-express" target="_blank">GitHub</a></p>
 
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -36,7 +37,7 @@
         <div style="text-align:center;">
           <input style="font-size:20px; width:330px;" type="text" id="title" name="title" placeholder="New title.." required><br>
           <input style="font-size:20px; width:330px;" type="text" id="titleSecret" name="titleSecret" placeholder="Secret.." required><br>
-          <button type="button" onclick="changeTitle('<%= row.title %>')">Submit</button><br>
+          <button type="button" onclick="changeTitle('<%= data.title %>')">Submit</button><br>
     
           <div id="noti"></div>
         </div>

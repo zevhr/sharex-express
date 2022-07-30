@@ -3,7 +3,7 @@ This is a simple Express server that handles all functions ShareX does and hosts
 ## Prerequisites
 You will need Node.js and NPM. That's it, literally.
 ## How do I set this up?
-See [the wiki](https://github.com/awexthedev/sharex-express/wiki) for more info on setting this up, along with API documentation.
+See [the wiki](https://github.com/zevhr/sharex-express/wiki) for more info on setting this up, along with API documentation.
 ## Errors
 `The uploads directory doesn't exist!` - What it says, make sure the uploads directory exists in app/static!  
 `No files were sent with your request!` - Also what it says. wait, How'd you manage that??  

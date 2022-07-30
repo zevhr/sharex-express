@@ -1,29 +1,19 @@
-const sqlite3 = require('sqlite3');
-const path = require('path');
-module.exports = () => {
-    var db = new sqlite3.Database(`${__dirname}/../storage.db`);
-        db.run(`CREATE TABLE IF NOT EXISTS "files" (
-            "title"	TEXT,
-            "date"	TEXT,
-            "url"	TEXT UNIQUE,
-            "extension" TEXT,
-            "type" TEXT
-        );`, (error, row) => {
-            if(error) {
-                console.log(`An error occurred in database creation! If this happens again, create an issue on GitHub.\n`, error)
-                process.exit();
-            }
-        })
+const sql = require('mysql2/promise');
+const { database } = require('../../config.json');
 
-        db.run(`CREATE TABLE IF NOT EXISTS "links" (
-            "url"	TEXT,
-            "id"    TEXT,
-            "date" TEXT,
-            "shortened" TEXT
-        );`, (error, row) => {
-            if(error) {
-                console.log(`An error occurred in database creation! If this happens again, create an issue on GitHub.\n`, error)
-                process.exit();
-            }
-        })
+const db = new sql.createPool({
+    host: database.host,
+    user: database.user,
+    pass: database.pass,
+    port: database.port,
+    database: database.database
+}) 
+
+db.query("CREATE TABLE IF NOT EXISTS content (title text unique, date text, url text unique, type text)");
+
+async function query(string, options) {
+    var q = await db.query(string, options);
+    return q[0];
 }
+
+module.exports = { query };
