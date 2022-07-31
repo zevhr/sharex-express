@@ -28,7 +28,7 @@
                 <div style="text-align:center;">
                   <h3>Are you sure you want to delete <span id="delLink"></span>?</h3><br>
                   <p style="color:red">Note: this action is unreversable!</p>
-                  <button type="button" onclick="deleteSS(document.getElementById('delLink').innerText, `<%= query.secret %>`)">Submit</button><br>
+                  <button type="button" onclick="deleteSS(document.getElementById('delLink').innerText, `<%= query.token %>`)">Submit</button><br>
             
                   <div id="err"></div>
                 </div>

@@ -11,6 +11,9 @@ const express = require('express');
 const upload = require('express-fileupload');
 const path = require('path');
 const chalk = require('chalk');
+const cron = require('node-cron');
+const fs = require('fs');
+const db = require('./app/utils/db');
 const { frontend, appc } = require('./config.json');
 
 require('./app/utils/db');
@@ -36,6 +39,19 @@ if (!frontend || !appc) {
     console.log(`Uh oh! You didn't properly configure the app. Check config.json!`) 
     process.exit(0);
 } 
+
+if (appc.expiry) {
+    cron.schedule('* 12 * * *', async () => {
+        var d = await db.query("SELECT * FROM content WHERE expiresAt < ?", [new Date().getTime()]);
+        if (d.length != 0) {
+            d.forEach(function(file) {
+                var filePath = path.resolve(__dirname, 'app/static/uploads', file.type, file.title)
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+                db.query("DELETE FROM content WHERE title=?", [file.title]);
+            })
+        }
+    });
+}
 
 // default route
 app.get('/', (req, res) => {

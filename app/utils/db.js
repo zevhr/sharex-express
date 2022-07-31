@@ -9,7 +9,7 @@ const db = new sql.createPool({
     database: database.database
 }) 
 
-db.query("CREATE TABLE IF NOT EXISTS content (title text unique, date text, url text unique, type text)");
+db.query("CREATE TABLE IF NOT EXISTS content (title varchar(255) unique primary key, date varchar(255), url varchar(255) unique, type varchar(255), expiresAt bigint)");
 
 async function query(string, options) {
     var q = await db.query(string, options);

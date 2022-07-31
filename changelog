@@ -10,3 +10,4 @@ This update comes with a LOT of improvements/changes. A lot has moved around and
 - Dotenv is no more -- all json (not sorry)
 - It just works :)
 - Removed unused dependencies from project
+- File expiry (new config key)

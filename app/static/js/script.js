@@ -1,8 +1,7 @@
 async function deleteSS(title, secret) {
 
-    await fetch(`/api/delete/${title}`, {
-        method: 'get',
-        headers: { 'secret': secret }
+    await fetch(`/api/delete/${title}?token=${secret}`, {
+        method: 'get'
     }).then(function(response) {
         if (response.status === 200) {
             console.log(`${title} successfully deleted.`)

@@ -3,7 +3,7 @@ const db = require('./db');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const { secret, frontend } = require('../../config.json');
+const { secret, frontend, appc } = require('../../config.json');
 const router = express.Router();
 
 router.get('/viewer', async (req, res) => {
@@ -58,7 +58,7 @@ router.get('/profile', async (req, res) => {
 
 // Upload handler
 var allowed_extensions = new Set(['png', 'jpg', 'txt', 'json', 'gif']);
-router.post('/upload', (req, res) => {
+router.post('/upload', async (req, res) => {
     // all the glorious checks
     var header = req.get('secret');
     if (!req.files) return res.status(400).json({"status":400,"message":"No content sent with request"});
@@ -70,16 +70,19 @@ router.post('/upload', (req, res) => {
 
     try {
         // get the date, move the file, insert the metadata
-        var date = new Date().toUTCString();
-        db.query("INSERT IGNORE INTO content VALUES (?,?,?,?)", [req.files.sharex.name.toLowerCase(), date, `${frontend.domain}/viewer?file=${req.files.sharex.name.toLowerCase()}`, fileExtension]);
-        req.files.sharex.mv(path.resolve(__dirname, '../static/uploads', fileExtension, req.files.sharex.name.toLowerCase()));
+        var date = new Date();
+        if (appc.expiry) var offsetDate = new Date(date.getTime() + 12*60*60*1000).getTime();
+        else offsetDate = null;
+
+        db.query("INSERT IGNORE INTO content VALUES (?,?,?,?,?)", [req.files.sharex.name, date.toUTCString(), `${frontend.domain}/viewer?file=${req.files.sharex.name}`, fileExtension, offsetDate]);
+        req.files.sharex.mv(path.resolve(__dirname, '../static/uploads', fileExtension, req.files.sharex.name));
     } catch (e) {
         console.log(e)
         return res.status(500).json({"status":500,"message":"Uh oh! Something went wrong."})
     }
 
     // aaand done :tada:
-    return res.status(200).json({"status":200,"message":"Successfully uploaded content to server", "url":`${frontend.domain}/viewer?file=${req.files.sharex.name.toLowerCase()}`});
+    return res.status(200).json({"status":200,"message":"Successfully uploaded content to server", "url":`${frontend.domain}/viewer?file=${req.files.sharex.name}`});
 })
 
 module.exports = router;
